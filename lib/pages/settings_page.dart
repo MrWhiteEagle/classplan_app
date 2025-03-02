@@ -16,7 +16,7 @@ class SettingsPage extends StatelessWidget {
           child: Column(
             children: [
               Text(
-                "Język:",
+                "Language:",
                 style: contentTextStyle(context),
                 ),
             ],
