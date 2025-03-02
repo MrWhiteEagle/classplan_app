@@ -46,7 +46,7 @@ ThemeData darkMode = ThemeData(
 
 TextStyle contentTextStyle(BuildContext context){
   return TextStyle(
-  fontSize: 14,
+  fontSize: 15,
   color: Theme.of(context).colorScheme.secondary,
   );
 }
