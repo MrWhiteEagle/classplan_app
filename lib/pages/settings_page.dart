@@ -15,10 +15,14 @@ class SettingsPage extends StatelessWidget {
           padding: const EdgeInsets.all(30.0),
           child: Column(
             children: [
-              Text(
-                "Język: ",
-                style: contentTextStyle(context),
-                ),
+              Row(
+                children: [
+                  Text(
+                    "Język:",
+                    style: contentTextStyle(context)
+                    ),
+                ],
+              ),
             ],
           ),
         ),
