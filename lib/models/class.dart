@@ -1,5 +1,10 @@
 import "package:isar/isar.dart";
 
+part 'class.g.dart';
 
-class Class {
+@collection
+class ClassObj {
+    Id id = Isar.autoIncrement;
+    late String name;
+
 }
