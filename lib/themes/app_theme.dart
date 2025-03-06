@@ -50,3 +50,10 @@ TextStyle contentTextStyle(BuildContext context){
   color: Theme.of(context).colorScheme.secondary,
   );
 }
+
+TextStyle higherContentTextStyle(BuildContext context){
+  return TextStyle(
+    fontSize: 17,
+    color: Theme.of(context).colorScheme.primary,
+  );
+}

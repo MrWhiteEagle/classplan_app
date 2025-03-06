@@ -1,3 +1,4 @@
+import 'package:classplan_new/pages/classes_page.dart';
 import 'package:flutter/material.dart';
 import 'package:classplan_new/pages/settings_page.dart';
 
@@ -30,6 +31,12 @@ class UniversalDrawer extends StatelessWidget {
               ListTile(
                 leading: Icon(Icons. book_outlined),
                 title: Text("K L A S Y"),
+                onTap: (){
+                  Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (context){
+                    return ClassesPage();
+                  },));
+                },
               ),
               ListTile(
                 leading: Icon(Icons.calendar_month_outlined),
