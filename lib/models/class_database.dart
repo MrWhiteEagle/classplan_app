@@ -1,8 +1,9 @@
 import 'package:classplan_new/models/class.dart';
+import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 
-class ClassDatabase {
+class ClassDatabase extends ChangeNotifier{
   static late Isar isar;
   //INITIALIZE
   static Future<void> initalize() async {
@@ -37,6 +38,7 @@ class ClassDatabase {
     List<ClassObj> fetchedClasses = await isar.classObjs.where().findAll();
     classList.clear();
     classList.addAll(fetchedClasses);
+    notifyListeners();
 
   }
 
@@ -55,5 +57,8 @@ class ClassDatabase {
   }
 
   //DELETE
-
+  Future<void> deleteClass (int id) async{
+    await isar.writeTxn(()=> isar.classObjs.delete(id));
+    await readClasses();
+  }
 }

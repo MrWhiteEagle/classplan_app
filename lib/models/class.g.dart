@@ -34,7 +34,7 @@ const ClassObjSchema = CollectionSchema(
   getId: _classObjGetId,
   getLinks: _classObjGetLinks,
   attach: _classObjAttach,
-  version: '3.1.0+1',
+  version: '3.1.8',
 );
 
 int _classObjEstimateSize(
