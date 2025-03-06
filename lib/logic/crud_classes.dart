@@ -16,7 +16,10 @@ void createClass(BuildContext context, TextEditingController textController){
           
           MaterialButton(
             child: const Text("Anuluj"),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              Navigator.pop(context);
+              textController.clear();
+            }
           ),
           MaterialButton(
             child: Text("Utwórz", style: higherContentTextStyle(context)),
@@ -24,13 +27,20 @@ void createClass(BuildContext context, TextEditingController textController){
               //Add class to database
               context.read<ClassDatabase>().addClass(textController.text);
               Navigator.pop(context);
+              textController.clear();
             }),
 
         ],
       ));
   }
 
+//read class list function
 void readClasses(BuildContext context){
   context.read<ClassDatabase>().readClasses();
 
+}
+
+//delete class function
+void deleteClass(BuildContext context, int id){
+  context.read<ClassDatabase>().deleteClass(id);
 }

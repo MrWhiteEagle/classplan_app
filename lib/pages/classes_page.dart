@@ -17,8 +17,8 @@ class _ClassesPageState extends State<ClassesPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    //on page load read existing classes
     readClasses(context);
   }
 
@@ -36,14 +36,20 @@ class _ClassesPageState extends State<ClassesPage> {
         child: Icon(Icons.add),
         ),
       body: ListView.builder(
+        padding: EdgeInsets.all(15),
         itemCount: currentClasses.length,
         itemBuilder: (context, index) {
         //get every class
         final classObj = currentClasses[index];
 
         //return every class as a tile
-        return ListTile(
-          title: Text(classObj.name),
+        return Card(
+          surfaceTintColor: Theme.of(context).colorScheme.secondary,
+          shadowColor: Theme.of(context).colorScheme.primary,
+          child: ListTile(
+            title: Text(classObj.name),
+            trailing: Icon(Icons.edit_note),
+          ),
         );
         
       })
