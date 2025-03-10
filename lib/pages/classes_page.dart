@@ -1,6 +1,7 @@
 import 'package:classplan_new/logic/crud_classes.dart';
 import 'package:classplan_new/models/class.dart';
 import 'package:classplan_new/models/class_database.dart';
+import 'package:classplan_new/pages/class_details_page.dart';
 import 'package:classplan_new/themes/app_theme.dart';
 import 'package:classplan_new/widgets/appBar.dart';
 import 'package:flutter/material.dart';
@@ -42,13 +43,16 @@ class _ClassesPageState extends State<ClassesPage> {
         //get every class
         final classObj = currentClasses[index];
 
-        //return every class as a tile
+        //return every class as a card
         return Card(
           surfaceTintColor: Theme.of(context).colorScheme.secondary,
           shadowColor: Theme.of(context).colorScheme.primary,
           child: ListTile(
             title: Text(classObj.name),
-            trailing: Icon(Icons.edit_note),
+            trailing: IconButton(
+              icon: Icon(Icons.edit_note),
+              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ClassDetailsPage(className: classObj.name, classId: classObj.id,))),
+              ),
           ),
         );
         

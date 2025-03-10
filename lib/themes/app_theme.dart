@@ -57,3 +57,11 @@ TextStyle higherContentTextStyle(BuildContext context){
     color: Theme.of(context).colorScheme.primary,
   );
 }
+
+TextStyle onPrimaryColorHeaderTextStyle(BuildContext context){
+  return TextStyle(
+    fontSize: 25,
+    color: Colors.white,
+    fontWeight: FontWeight.bold,
+  );
+}
