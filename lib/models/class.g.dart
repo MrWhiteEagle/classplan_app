@@ -21,6 +21,11 @@ const ClassObjSchema = CollectionSchema(
       id: 0,
       name: r'name',
       type: IsarType.string,
+    ),
+    r'students': PropertySchema(
+      id: 1,
+      name: r'students',
+      type: IsarType.longList,
     )
   },
   estimateSize: _classObjEstimateSize,
@@ -44,6 +49,7 @@ int _classObjEstimateSize(
 ) {
   var bytesCount = offsets.last;
   bytesCount += 3 + object.name.length * 3;
+  bytesCount += 3 + object.students.length * 8;
   return bytesCount;
 }
 
@@ -54,6 +60,7 @@ void _classObjSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.name);
+  writer.writeLongList(offsets[1], object.students);
 }
 
 ClassObj _classObjDeserialize(
@@ -65,6 +72,7 @@ ClassObj _classObjDeserialize(
   final object = ClassObj();
   object.id = id;
   object.name = reader.readString(offsets[0]);
+  object.students = reader.readLongList(offsets[1]) ?? [];
   return object;
 }
 
@@ -77,6 +85,8 @@ P _classObjDeserializeProp<P>(
   switch (propertyId) {
     case 0:
       return (reader.readString(offset)) as P;
+    case 1:
+      return (reader.readLongList(offset) ?? []) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -352,6 +362,148 @@ extension ClassObjQueryFilter
       ));
     });
   }
+
+  QueryBuilder<ClassObj, ClassObj, QAfterFilterCondition>
+      studentsElementEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'students',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ClassObj, ClassObj, QAfterFilterCondition>
+      studentsElementGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'students',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ClassObj, ClassObj, QAfterFilterCondition>
+      studentsElementLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'students',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ClassObj, ClassObj, QAfterFilterCondition>
+      studentsElementBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'students',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<ClassObj, ClassObj, QAfterFilterCondition> studentsLengthEqualTo(
+      int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'students',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<ClassObj, ClassObj, QAfterFilterCondition> studentsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'students',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<ClassObj, ClassObj, QAfterFilterCondition> studentsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'students',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<ClassObj, ClassObj, QAfterFilterCondition>
+      studentsLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'students',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<ClassObj, ClassObj, QAfterFilterCondition>
+      studentsLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'students',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<ClassObj, ClassObj, QAfterFilterCondition> studentsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'students',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
 }
 
 extension ClassObjQueryObject
@@ -409,6 +561,12 @@ extension ClassObjQueryWhereDistinct
       return query.addDistinctBy(r'name', caseSensitive: caseSensitive);
     });
   }
+
+  QueryBuilder<ClassObj, ClassObj, QDistinct> distinctByStudents() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'students');
+    });
+  }
 }
 
 extension ClassObjQueryProperty
@@ -422,6 +580,12 @@ extension ClassObjQueryProperty
   QueryBuilder<ClassObj, String, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
+    });
+  }
+
+  QueryBuilder<ClassObj, List<int>, QQueryOperations> studentsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'students');
     });
   }
 }

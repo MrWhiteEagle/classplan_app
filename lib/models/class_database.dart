@@ -33,7 +33,7 @@ class ClassDatabase extends ChangeNotifier{
   }
 
 
-  //READ
+  //READ ALL CLASSES
   Future<void> readClasses() async{
     List<ClassObj> fetchedClasses = await isar.classObjs.where().findAll();
     classList.clear();
@@ -60,5 +60,16 @@ class ClassDatabase extends ChangeNotifier{
   Future<void> deleteClass (int id) async{
     await isar.writeTxn(()=> isar.classObjs.delete(id));
     await readClasses();
+  }
+
+
+  //ADD STUDENT
+  Future<void> addStudent (int id, int studentId) async{
+    final existingClass = await isar.classObjs.get(id);
+    if(existingClass != null){
+      existingClass.students.add(studentId);
+      await isar.writeTxn(()=> isar.classObjs.put(existingClass));
+      notifyListeners();
+    }
   }
 }
