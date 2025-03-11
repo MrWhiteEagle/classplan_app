@@ -1,4 +1,5 @@
 import 'package:classplan_new/models/class_database.dart';
+import 'package:classplan_new/models/student_database.dart';
 import 'package:classplan_new/themes/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,8 +9,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ClassDatabase.initalize();
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => ClassDatabase(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ClassDatabase()),
+        ChangeNotifierProvider(create: (context) => StudentDatabase()),
+      ],
       child: ClassPlanApp(),
     )
   );

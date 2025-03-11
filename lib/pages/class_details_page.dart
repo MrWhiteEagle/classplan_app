@@ -2,6 +2,8 @@ import 'package:classplan_new/logic/crud_classes.dart';
 import 'package:classplan_new/logic/crud_students.dart';
 import 'package:classplan_new/themes/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:classplan_new/models/student.dart';
 import 'package:classplan_new/models/student_database.dart';
 
 class ClassDetailsPage extends StatefulWidget {
@@ -30,6 +32,9 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final studentDatabase = context.watch<StudentDatabase>();
+    List<Student> currentStudents = studentDatabase.studentList;
+
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -61,9 +66,9 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
               ],),
           ),
           ListView.builder(
-            itemCount: StudentDatabase().studentList.length,
+            itemCount: currentStudents.length,
             itemBuilder: (context, index){
-              final student = StudentDatabase().studentList[index];
+              final student = currentStudents[index];
               return Card(
                 child: ListTile(
                   title: Text('${student.name} ${student.lastName}'),
