@@ -1,5 +1,8 @@
+import 'package:classplan_new/logic/crud_classes.dart';
+import 'package:classplan_new/logic/crud_students.dart';
 import 'package:classplan_new/themes/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:classplan_new/models/student_database.dart';
 
 class ClassDetailsPage extends StatefulWidget {
   final String className;
@@ -16,13 +19,35 @@ class ClassDetailsPage extends StatefulWidget {
 }
 
 class _ClassDetailsPageState extends State<ClassDetailsPage> {
+
+  @override
+  void initState() {
+    super.initState();
+    readStudentsFromClass(context, widget.classId);
+  }
+  final nameController = TextEditingController();
+  final lastNameController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: (){
+              createStudent(context, nameController, lastNameController, widget.classId);
+            },
+          ),
+          IconButton(
+            onPressed: ()=>deleteClass(context, widget.classId),
+            icon: Icon(Icons.delete),)
+        ],
+        centerTitle: false,
         title: Text(widget.className),
+
       ),
-      body: ListView(
+      body: Column(
         children: [
           Container(
             padding: EdgeInsets.all(15),
@@ -34,7 +59,25 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                   style: onPrimaryColorHeaderTextStyle(context),
                 ),
               ],),
-          )
+          ),
+          ListView.builder(
+            itemCount: StudentDatabase().studentList.length,
+            itemBuilder: (context, index){
+              final student = StudentDatabase().studentList[index];
+              return Card(
+                child: ListTile(
+                  title: Text('${student.name} ${student.lastName}'),
+                  subtitle: Text('Numer telefonu: ${student.phoneNumber}'),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: (){
+                      deleteStudent(context, student.studentId);
+                    },
+                  ),
+                ),
+              );
+            },
+          ),
         ],
       ),
     );

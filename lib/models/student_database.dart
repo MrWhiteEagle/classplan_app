@@ -17,9 +17,10 @@ class StudentDatabase extends ChangeNotifier{
   final List<Student> studentList = [];
 
   //CREATE
-  Future<void> addStudent(String studentName, Id classId) async{
+  Future<void> addStudent(String studentName, String lastName, Id classId) async{
     final newStudent = Student()
     ..name = studentName
+    ..lastName = lastName
     ..classIds.add(classId);
     await isar.writeTxn(()=> isar.students.put(newStudent));
     readStudents();

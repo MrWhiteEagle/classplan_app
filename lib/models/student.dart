@@ -1,3 +1,5 @@
+import "dart:ffi";
+
 import "package:isar/isar.dart";
 
 part 'student.g.dart';
@@ -11,4 +13,5 @@ class Student {
     late String phoneNumber;
     late String parentPhoneNumber;
     late String parentPhoneNumber2;
+    List<int> points = [];
 }

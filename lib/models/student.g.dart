@@ -46,6 +46,11 @@ const StudentSchema = CollectionSchema(
       id: 5,
       name: r'phoneNumber',
       type: IsarType.string,
+    ),
+    r'points': PropertySchema(
+      id: 6,
+      name: r'points',
+      type: IsarType.longList,
     )
   },
   estimateSize: _studentEstimateSize,
@@ -74,6 +79,7 @@ int _studentEstimateSize(
   bytesCount += 3 + object.parentPhoneNumber.length * 3;
   bytesCount += 3 + object.parentPhoneNumber2.length * 3;
   bytesCount += 3 + object.phoneNumber.length * 3;
+  bytesCount += 3 + object.points.length * 8;
   return bytesCount;
 }
 
@@ -89,6 +95,7 @@ void _studentSerialize(
   writer.writeString(offsets[3], object.parentPhoneNumber);
   writer.writeString(offsets[4], object.parentPhoneNumber2);
   writer.writeString(offsets[5], object.phoneNumber);
+  writer.writeLongList(offsets[6], object.points);
 }
 
 Student _studentDeserialize(
@@ -104,6 +111,7 @@ Student _studentDeserialize(
   object.parentPhoneNumber = reader.readString(offsets[3]);
   object.parentPhoneNumber2 = reader.readString(offsets[4]);
   object.phoneNumber = reader.readString(offsets[5]);
+  object.points = reader.readLongList(offsets[6]) ?? [];
   object.studentId = id;
   return object;
 }
@@ -127,6 +135,8 @@ P _studentDeserializeProp<P>(
       return (reader.readString(offset)) as P;
     case 5:
       return (reader.readString(offset)) as P;
+    case 6:
+      return (reader.readLongList(offset) ?? []) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -1027,6 +1037,144 @@ extension StudentQueryFilter
     });
   }
 
+  QueryBuilder<Student, Student, QAfterFilterCondition> pointsElementEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'points',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition>
+      pointsElementGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'points',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> pointsElementLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'points',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> pointsElementBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'points',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> pointsLengthEqualTo(
+      int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'points',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> pointsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'points',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> pointsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'points',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> pointsLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'points',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> pointsLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'points',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> pointsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'points',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
   QueryBuilder<Student, Student, QAfterFilterCondition> studentIdEqualTo(
       Id value) {
     return QueryBuilder.apply(this, (query) {
@@ -1268,6 +1416,12 @@ extension StudentQueryWhereDistinct
       return query.addDistinctBy(r'phoneNumber', caseSensitive: caseSensitive);
     });
   }
+
+  QueryBuilder<Student, Student, QDistinct> distinctByPoints() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'points');
+    });
+  }
 }
 
 extension StudentQueryProperty
@@ -1311,6 +1465,12 @@ extension StudentQueryProperty
   QueryBuilder<Student, String, QQueryOperations> phoneNumberProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'phoneNumber');
+    });
+  }
+
+  QueryBuilder<Student, List<int>, QQueryOperations> pointsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'points');
     });
   }
 }
