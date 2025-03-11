@@ -1,3 +1,4 @@
+import 'package:classplan_new/logic/isar_service.dart';
 import 'package:classplan_new/models/class_database.dart';
 import 'package:classplan_new/models/student_database.dart';
 import 'package:classplan_new/themes/app_theme.dart';
@@ -7,7 +8,7 @@ import 'pages/login_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await ClassDatabase.initalize();
+  await IsarService().initialize();
   runApp(
     MultiProvider(
       providers: [

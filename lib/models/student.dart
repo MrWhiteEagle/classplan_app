@@ -1,5 +1,3 @@
-import "dart:ffi";
-
 import "package:isar/isar.dart";
 
 part 'student.g.dart';
@@ -7,11 +5,11 @@ part 'student.g.dart';
 @collection
 class Student {
     Id studentId = Isar.autoIncrement;
-    late List<Id> classIds;
+    List<Id> classIds = [];
     late String name;
     late String lastName;
-    late String phoneNumber;
-    late String parentPhoneNumber;
-    late String parentPhoneNumber2;
+    String phoneNumber = '';
+    String parentPhoneNumber = '';
+    String parentPhoneNumber2 = '';
     List<int> points = [];
 }

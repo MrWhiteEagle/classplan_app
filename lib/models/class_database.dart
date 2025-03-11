@@ -1,20 +1,11 @@
+import 'package:classplan_new/logic/isar_service.dart';
 import 'package:classplan_new/models/class.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 
 class ClassDatabase extends ChangeNotifier{
-  static late Isar isar;
-  //INITIALIZE
-  static Future<void> initalize() async {
-    final dir = await getApplicationDocumentsDirectory();
-    isar = await Isar.open(
-      //db items schema
-      [ClassObjSchema],
-      //directory (default documents directory)
-      directory: dir.path
-      );
-  }
+  final IsarService isarService = IsarService();
 
   //List of classes
   final List<ClassObj> classList = [];
@@ -26,7 +17,7 @@ class ClassDatabase extends ChangeNotifier{
     final newClass = ClassObj()..name = className;
 
     //save to db
-    await isar.writeTxn(() => isar.classObjs.put(newClass));
+    await isarService.isar.writeTxn(() => isarService.isar.classObjs.put(newClass));
 
     //re-read from db
     readClasses();
@@ -35,7 +26,7 @@ class ClassDatabase extends ChangeNotifier{
 
   //READ ALL CLASSES
   Future<void> readClasses() async{
-    List<ClassObj> fetchedClasses = await isar.classObjs.where().findAll();
+    List<ClassObj> fetchedClasses = await isarService.isar.classObjs.where().findAll();
     classList.clear();
     classList.addAll(fetchedClasses);
     notifyListeners();
@@ -47,28 +38,28 @@ class ClassDatabase extends ChangeNotifier{
 
   Future<void> updateClass(int id, String newName) async {
     //get content of existing class
-    final existingClass = await isar.classObjs.get(id);
+    final existingClass = await isarService.isar.classObjs.get(id);
 
     //if a class is not null, change its content to the new one, and save it in the db.
     if(existingClass != null){
       existingClass.name = newName;
-      await isar.writeTxn(()=> isar.classObjs.put(existingClass));
+      await isarService.isar.writeTxn(()=> isarService.isar.classObjs.put(existingClass));
     }
   }
 
   //DELETE
   Future<void> deleteClass (int id) async{
-    await isar.writeTxn(()=> isar.classObjs.delete(id));
+    await isarService.isar.writeTxn(()=> isarService.isar.classObjs.delete(id));
     await readClasses();
   }
 
 
   //ADD STUDENT
   Future<void> addStudent (int id, int studentId) async{
-    final existingClass = await isar.classObjs.get(id);
+    final existingClass = await isarService.isar.classObjs.get(id);
     if(existingClass != null){
       existingClass.students.add(studentId);
-      await isar.writeTxn(()=> isar.classObjs.put(existingClass));
+      await isarService.isar.writeTxn(()=> isarService.isar.classObjs.put(existingClass));
       notifyListeners();
     }
   }

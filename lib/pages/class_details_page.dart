@@ -45,7 +45,10 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
             },
           ),
           IconButton(
-            onPressed: ()=>deleteClass(context, widget.classId),
+            onPressed: (){
+              deleteClass(context, widget.classId);
+              Navigator.pop(context);
+            },
             icon: Icon(Icons.delete),)
         ],
         centerTitle: false,
@@ -65,23 +68,25 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                 ),
               ],),
           ),
-          ListView.builder(
-            itemCount: currentStudents.length,
-            itemBuilder: (context, index){
-              final student = currentStudents[index];
-              return Card(
-                child: ListTile(
-                  title: Text('${student.name} ${student.lastName}'),
-                  subtitle: Text('Numer telefonu: ${student.phoneNumber}'),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: (){
-                      deleteStudent(context, student.studentId);
-                    },
+          Flexible(
+            child: ListView.builder(
+              itemCount: currentStudents.length,
+              itemBuilder: (context, index){
+                final student = currentStudents[index];
+                return Card(
+                  child: ListTile(
+                    title: Text('${student.name} ${student.lastName}'),
+                    subtitle: Text('Numer telefonu: ${student.phoneNumber}'),
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: (){
+                        deleteStudent(context, student.studentId);
+                      },
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         ],
       ),
