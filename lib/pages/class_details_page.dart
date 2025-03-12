@@ -14,19 +14,19 @@ class ClassDetailsPage extends StatefulWidget {
     super.key,
     required this.className,
     required this.classId,
-    });
+  });
 
   @override
   State<ClassDetailsPage> createState() => _ClassDetailsPageState();
 }
 
 class _ClassDetailsPageState extends State<ClassDetailsPage> {
-
   @override
   void initState() {
     super.initState();
     readStudentsFromClass(context, widget.classId);
   }
+
   final nameController = TextEditingController();
   final lastNameController = TextEditingController();
 
@@ -40,20 +40,25 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
         actions: [
           IconButton(
             icon: Icon(Icons.add),
-            onPressed: (){
-              createStudent(context, nameController, lastNameController, widget.classId);
+            onPressed: () {
+              createStudent(
+                context,
+                nameController,
+                lastNameController,
+                widget.classId,
+              );
             },
           ),
           IconButton(
-            onPressed: (){
+            onPressed: () {
               deleteClass(context, widget.classId);
               Navigator.pop(context);
             },
-            icon: Icon(Icons.delete),)
+            icon: Icon(Icons.delete),
+          ),
         ],
         centerTitle: false,
         title: Text(widget.className),
-
       ),
       body: Column(
         children: [
@@ -66,12 +71,13 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                   'Klasa ${widget.className}',
                   style: onPrimaryColorHeaderTextStyle(context),
                 ),
-              ],),
+              ],
+            ),
           ),
           Flexible(
             child: ListView.builder(
               itemCount: currentStudents.length,
-              itemBuilder: (context, index){
+              itemBuilder: (context, index) {
                 final student = currentStudents[index];
                 return Card(
                   child: ListTile(
