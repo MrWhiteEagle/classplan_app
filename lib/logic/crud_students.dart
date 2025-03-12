@@ -52,12 +52,12 @@ void createStudent(BuildContext context, TextEditingController nameController, T
 
 //Read students from class method
 void readStudentsFromClass(BuildContext context, int classId){
-  context.read<StudentDatabase>().readStudentsByClassId(classId);
+  context.read<StudentDatabase>().readStudents(classId);
 }
 
 //Read all students from database method
 void readAllStudents(BuildContext context){
-  context.read<StudentDatabase>().readStudents();
+  context.read<StudentDatabase>().readStudents(null);
 }
 
 //Delete student method

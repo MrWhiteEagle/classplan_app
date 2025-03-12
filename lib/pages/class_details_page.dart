@@ -76,13 +76,7 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                 return Card(
                   child: ListTile(
                     title: Text('${student.name} ${student.lastName}'),
-                    subtitle: Text('Numer telefonu: ${student.phoneNumber}'),
-                    trailing: IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: (){
-                        deleteStudent(context, student.studentId);
-                      },
-                    ),
+                    subtitle: Text('Punkty: ${student.points}'),
                   ),
                 );
               },

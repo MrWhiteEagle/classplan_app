@@ -2,7 +2,6 @@ import 'package:classplan_new/logic/isar_service.dart';
 import 'package:classplan_new/models/class.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
-import 'package:path_provider/path_provider.dart';
 
 class ClassDatabase extends ChangeNotifier{
   final IsarService isarService = IsarService();

@@ -1,7 +1,6 @@
 import 'package:classplan_new/logic/isar_service.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:classplan_new/models/student.dart';
 
 class StudentDatabase extends ChangeNotifier{
@@ -16,23 +15,25 @@ class StudentDatabase extends ChangeNotifier{
     ..lastName = lastName
     ..classIds.add(classId);
     await isarService.isar.writeTxn(()=> isarService.isar.students.put(newStudent));
-    readStudents();
+    readStudents(classId);
   }
 
-  //READ ALL STUDENTS
-  Future<void> readStudents() async{
-    List<Student> fetchedStudents = await isarService.isar.students.where().findAll();
-    studentList.clear();
-    studentList.addAll(fetchedStudents);
-    notifyListeners();
-  }
-
-  //READ STUDENTS BY CLASSID
-  Future<void> readStudentsByClassId(Id classId) async{
+  //READ STUDENTS BY CLASSID OR ALL
+  Future<void> readStudents(Id? classId) async{
+    if(classId == null){
+      //if no classID specified, fetches all studcents
+      List<Student> fetchedStudents = await isarService.isar.students.where().findAll();
+      studentList.clear();
+      studentList.addAll(fetchedStudents);
+      notifyListeners();
+    }
+    else{
+      //classID specified, fetched students from that class
     List<Student> fetchedStudents = await isarService.isar.students.filter().classIdsElementEqualTo(classId).findAll();
     studentList.clear();
     studentList.addAll(fetchedStudents);
     notifyListeners();
+    }
   }
 
   //UPDATE STUDENT
@@ -51,6 +52,6 @@ class StudentDatabase extends ChangeNotifier{
   //DELETE STUDENT
   Future<void> deleteStudent(Id studentId) async{
     await isarService.isar.writeTxn(()=> isarService.isar.students.delete(studentId));
-    readStudents();
+    readStudents(null);
   }
 }
