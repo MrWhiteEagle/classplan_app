@@ -4,43 +4,41 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 //Create class button function
-void createClass(BuildContext context, TextEditingController textController){
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text("Nazwij nową klasę:"),
-        content: TextField(
-          controller: textController,
+void createClass(BuildContext context, TextEditingController textController) {
+  showDialog(
+    context: context,
+    builder:
+        (context) => AlertDialog(
+          title: Text("Nazwij nową klasę:"),
+          content: TextField(controller: textController),
+          actions: [
+            MaterialButton(
+              child: const Text("Anuluj"),
+              onPressed: () {
+                Navigator.pop(context);
+                textController.clear();
+              },
+            ),
+            MaterialButton(
+              child: Text("Utwórz", style: higherContentTextStyle(context)),
+              onPressed: () {
+                //Add class to database
+                context.read<ClassDatabase>().addClass(textController.text);
+                Navigator.pop(context);
+                textController.clear();
+              },
+            ),
+          ],
         ),
-        actions: [
-          
-          MaterialButton(
-            child: const Text("Anuluj"),
-            onPressed: () {
-              Navigator.pop(context);
-              textController.clear();
-            }
-          ),
-          MaterialButton(
-            child: Text("Utwórz", style: higherContentTextStyle(context)),
-            onPressed: () {
-              //Add class to database
-              context.read<ClassDatabase>().addClass(textController.text);
-              Navigator.pop(context);
-              textController.clear();
-            }),
-
-        ],
-      ));
-  }
+  );
+}
 
 //read class list function
-void readClasses(BuildContext context){
+void readClasses(BuildContext context) {
   context.read<ClassDatabase>().readClasses();
-
 }
 
 //delete class function
-void deleteClass(BuildContext context, int id){
+void deleteClass(BuildContext context, int id) {
   context.read<ClassDatabase>().deleteClass(id);
 }

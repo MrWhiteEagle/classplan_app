@@ -1,3 +1,4 @@
+// ignore: unused_import
 import 'package:classplan_new/logic/settings.json';
 import 'package:classplan_new/themes/app_theme.dart';
 import 'package:classplan_new/widgets/appBar.dart';
@@ -15,14 +16,7 @@ class SettingsPage extends StatelessWidget {
           padding: const EdgeInsets.all(30.0),
           child: Column(
             children: [
-              Row(
-                children: [
-                  Text(
-                    "Język:",
-                    style: contentTextStyle(context),
-                    ),
-                ],
-              ),
+              Row(children: [Text("Język:", style: contentTextStyle(context))]),
             ],
           ),
         ),

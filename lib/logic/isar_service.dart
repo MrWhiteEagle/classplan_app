@@ -16,10 +16,10 @@ class IsarService {
   Future<void> initialize() async {
     if (Isar.instanceNames.isEmpty) {
       final dir = await getApplicationDocumentsDirectory();
-      isar = await Isar.open(
-        [ClassObjSchema, StudentSchema],
-        directory: dir.path,
-      );
+      isar = await Isar.open([
+        ClassObjSchema,
+        StudentSchema,
+      ], directory: dir.path);
     } else {
       isar = Isar.getInstance()!;
     }
