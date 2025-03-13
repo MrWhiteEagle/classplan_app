@@ -14,11 +14,8 @@ ThemeData lightMode = ThemeData(
       iconColor: Color(0xFFBD004E),
       foregroundColor: Color(0xFFBD004E),
       surfaceTintColor: Color(0xFFBD004E),
-      side: BorderSide(
-        color: Color(0xFFBD004E),
-      ),
+      side: BorderSide(color: Color(0xFFBD004E)),
     ),
-    
   ),
 );
 
@@ -36,29 +33,27 @@ ThemeData darkMode = ThemeData(
       iconColor: Color(0xFF8D003B),
       foregroundColor: Color(0xFF8D003B),
       surfaceTintColor: Color(0xFF8D003B),
-      side: BorderSide(
-        color: Color(0xFF8D003B),
-      ),
+      side: BorderSide(color: Color(0xFF8D003B)),
     ),
-    
   ),
 );
 
-TextStyle contentTextStyle(BuildContext context){
+TextStyle contentTextStyle(BuildContext context) {
   return TextStyle(
-  fontSize: 15,
-  color: Theme.of(context).colorScheme.secondary,
+    fontSize: 15,
+    color: Theme.of(context).colorScheme.secondary,
   );
 }
 
-TextStyle higherContentTextStyle(BuildContext context){
+TextStyle higherContentTextStyle(BuildContext context) {
   return TextStyle(
     fontSize: 17,
     color: Theme.of(context).colorScheme.primary,
+    fontWeight: FontWeight.bold,
   );
 }
 
-TextStyle onPrimaryColorHeaderTextStyle(BuildContext context){
+TextStyle onPrimaryColorHeaderTextStyle(BuildContext context) {
   return TextStyle(
     fontSize: 25,
     color: Colors.white,

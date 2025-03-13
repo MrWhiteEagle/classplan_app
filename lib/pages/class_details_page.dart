@@ -1,5 +1,6 @@
 import 'package:classplan_new/logic/crud_classes.dart';
 import 'package:classplan_new/logic/crud_students.dart';
+import 'package:classplan_new/pages/student_details_page.dart';
 import 'package:classplan_new/themes/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -81,8 +82,26 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                 final student = currentStudents[index];
                 return Card(
                   child: ListTile(
-                    title: Text('${student.name} ${student.lastName}'),
-                    subtitle: Text('Punkty: ${student.points}'),
+                    title: Text(
+                      '${student.name} ${student.lastName}',
+                      style: higherContentTextStyle(context),
+                    ),
+                    subtitle: Text(
+                      student.points.isNotEmpty
+                          ? 'Aktywność: ${student.points}'
+                          : 'Brak aktywności',
+                    ),
+                    onTap:
+                        () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return StudentDetailsPage(
+                                studentId: student.studentId,
+                              );
+                            },
+                          ),
+                        ),
                   ),
                 );
               },

@@ -50,7 +50,7 @@ const StudentSchema = CollectionSchema(
     r'points': PropertySchema(
       id: 6,
       name: r'points',
-      type: IsarType.longList,
+      type: IsarType.stringList,
     )
   },
   estimateSize: _studentEstimateSize,
@@ -79,7 +79,13 @@ int _studentEstimateSize(
   bytesCount += 3 + object.parentPhoneNumber.length * 3;
   bytesCount += 3 + object.parentPhoneNumber2.length * 3;
   bytesCount += 3 + object.phoneNumber.length * 3;
-  bytesCount += 3 + object.points.length * 8;
+  bytesCount += 3 + object.points.length * 3;
+  {
+    for (var i = 0; i < object.points.length; i++) {
+      final value = object.points[i];
+      bytesCount += value.length * 3;
+    }
+  }
   return bytesCount;
 }
 
@@ -95,7 +101,7 @@ void _studentSerialize(
   writer.writeString(offsets[3], object.parentPhoneNumber);
   writer.writeString(offsets[4], object.parentPhoneNumber2);
   writer.writeString(offsets[5], object.phoneNumber);
-  writer.writeLongList(offsets[6], object.points);
+  writer.writeStringList(offsets[6], object.points);
 }
 
 Student _studentDeserialize(
@@ -111,7 +117,7 @@ Student _studentDeserialize(
   object.parentPhoneNumber = reader.readString(offsets[3]);
   object.parentPhoneNumber2 = reader.readString(offsets[4]);
   object.phoneNumber = reader.readString(offsets[5]);
-  object.points = reader.readLongList(offsets[6]) ?? [];
+  object.points = reader.readStringList(offsets[6]) ?? [];
   object.studentId = id;
   return object;
 }
@@ -136,7 +142,7 @@ P _studentDeserializeProp<P>(
     case 5:
       return (reader.readString(offset)) as P;
     case 6:
-      return (reader.readLongList(offset) ?? []) as P;
+      return (reader.readStringList(offset) ?? []) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -1038,47 +1044,55 @@ extension StudentQueryFilter
   }
 
   QueryBuilder<Student, Student, QAfterFilterCondition> pointsElementEqualTo(
-      int value) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'points',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Student, Student, QAfterFilterCondition>
       pointsElementGreaterThan(
-    int value, {
+    String value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'points',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Student, Student, QAfterFilterCondition> pointsElementLessThan(
-    int value, {
+    String value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'points',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Student, Student, QAfterFilterCondition> pointsElementBetween(
-    int lower,
-    int upper, {
+    String lower,
+    String upper, {
     bool includeLower = true,
     bool includeUpper = true,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -1087,6 +1101,76 @@ extension StudentQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> pointsElementStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'points',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> pointsElementEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'points',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> pointsElementContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'points',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> pointsElementMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'points',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> pointsElementIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'points',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition>
+      pointsElementIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'points',
+        value: '',
       ));
     });
   }
@@ -1468,7 +1552,7 @@ extension StudentQueryProperty
     });
   }
 
-  QueryBuilder<Student, List<int>, QQueryOperations> pointsProperty() {
+  QueryBuilder<Student, List<String>, QQueryOperations> pointsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'points');
     });
