@@ -38,6 +38,8 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: false,
+        title: Text("Informacje o klasie"),
         actions: [
           IconButton(
             icon: Icon(Icons.add),
@@ -58,19 +60,38 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
             icon: Icon(Icons.delete),
           ),
         ],
-        centerTitle: false,
-        title: Text(widget.className),
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
             padding: EdgeInsets.all(15),
             color: Theme.of(context).colorScheme.primary,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
                   'Klasa ${widget.className}',
+                  textAlign: TextAlign.center,
                   style: onPrimaryColorHeaderTextStyle(context),
+                ),
+                SizedBox(height: 50),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      children: [
+                        Text("Wychowawca", textAlign: TextAlign.left),
+                        Text("TOBEADDED", textAlign: TextAlign.left),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Text("Liczba uczniów"),
+                        Text(currentStudents.length.toString()),
+                      ],
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -81,6 +102,8 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
               itemBuilder: (context, index) {
                 final student = currentStudents[index];
                 return Card(
+                  surfaceTintColor: Theme.of(context).colorScheme.primary,
+                  elevation: 5,
                   child: ListTile(
                     title: Text(
                       '${student.name} ${student.lastName}',
@@ -90,6 +113,7 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                       student.points.isNotEmpty
                           ? 'Aktywność: ${student.points}'
                           : 'Brak aktywności',
+                      textAlign: TextAlign.right,
                     ),
                     onTap:
                         () => Navigator.push(

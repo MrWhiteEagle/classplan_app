@@ -4,7 +4,6 @@ import 'package:classplan_new/models/class_database.dart';
 import 'package:classplan_new/pages/class_details_page.dart';
 // ignore: unused_import
 import 'package:classplan_new/themes/app_theme.dart';
-import 'package:classplan_new/widgets/appBar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -30,7 +29,11 @@ class _ClassesPageState extends State<ClassesPage> {
     final classesDatabase = context.watch<ClassDatabase>();
     List<ClassObj> currentClasses = classesDatabase.classList;
     return Scaffold(
-      appBar: UniversalAppBar(title: "Klasy"),
+      appBar: AppBar(
+        title: Text("Lista klas"),
+        titleTextStyle: onPrimaryColorHeaderTextStyle(context),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => createClass(context, textController),
         child: Icon(Icons.add),
@@ -44,24 +47,26 @@ class _ClassesPageState extends State<ClassesPage> {
 
           //return every class as a card
           return Card(
-            surfaceTintColor: Theme.of(context).colorScheme.secondary,
-            shadowColor: Theme.of(context).colorScheme.primary,
+            elevation: 5,
+            surfaceTintColor: Theme.of(context).colorScheme.primary,
             child: ListTile(
-              title: Text(classObj.name),
-              trailing: IconButton(
-                icon: Icon(Icons.edit_note),
-                onPressed:
-                    () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) => ClassDetailsPage(
-                              className: classObj.name,
-                              classId: classObj.id,
-                            ),
-                      ),
-                    ),
+              title: Text(
+                classObj.name,
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
+              subtitle: Text("Wychowawca: TBA"),
+              trailing: Icon(Icons.edit_note),
+              onTap:
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => ClassDetailsPage(
+                            className: classObj.name,
+                            classId: classObj.id,
+                          ),
+                    ),
+                  ),
             ),
           );
         },

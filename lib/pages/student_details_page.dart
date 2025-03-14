@@ -39,54 +39,114 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
       ),
       body:
           student != null
-              ? Padding(
-                padding: const EdgeInsets.all(10),
-                child: Card(
-                  color: Theme.of(context).colorScheme.surface,
-                  surfaceTintColor: Theme.of(context).colorScheme.primary,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        student.name,
-                        style: higherContentTextStyle(context),
+              ? Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: Card(
+                      elevation: 20,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Card(
+                              surfaceTintColor:
+                                  Theme.of(context).colorScheme.primary,
+                              child: Container(
+                                padding: EdgeInsets.all(30),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Text(
+                                      student.name,
+                                      style: higherContentTextStyle(
+                                        context,
+                                      ).copyWith(fontSize: 23),
+                                    ),
+                                    Text(
+                                      student.lastName,
+                                      style: higherContentTextStyle(
+                                        context,
+                                      ).copyWith(fontSize: 23),
+                                    ),
+                                    SizedBox(height: 100),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Column(
+                                          children: [
+                                            Text("Numer telefonu"),
+                                            Text(
+                                              student.phoneNumber != ''
+                                                  ? student.phoneNumber
+                                                  : "Nie podano",
+                                              style: higherContentTextStyle(
+                                                context,
+                                              ).copyWith(fontSize: 15),
+                                            ),
+                                          ],
+                                        ),
+                                        Column(
+                                          children: [
+                                            Text("Aktywność"),
+                                            Text(
+                                              student.points.isNotEmpty
+                                                  ? "${student.points}"
+                                                  : "Brak Aktywności",
+                                              style: higherContentTextStyle(
+                                                context,
+                                              ).copyWith(fontSize: 15),
+                                            ),
+                                          ],
+                                        ),
+                                        //TO-DO ADD CLASS LISTING
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 30),
+                            Text(
+                              "Informacje dodatkowe",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                            ),
+                            SizedBox(height: 50),
+                            Text(
+                              "Numer Telefonu Matki",
+                              textAlign: TextAlign.left,
+                            ),
+                            Text(
+                              student.parentPhoneNumber != ''
+                                  ? student.parentPhoneNumber
+                                  : "Nie podano",
+                              style: higherContentTextStyle(
+                                context,
+                              ).copyWith(fontSize: 13),
+                            ),
+                            SizedBox(height: 20),
+                            Text("Numer telefonu ojca"),
+                            Text(
+                              student.parentPhoneNumber2 != ''
+                                  ? student.parentPhoneNumber2
+                                  : "Nie podano",
+                              style: higherContentTextStyle(
+                                context,
+                              ).copyWith(fontSize: 13),
+                            ),
+                          ],
+                        ),
                       ),
-                      Text(
-                        student.lastName,
-                        style: higherContentTextStyle(context),
-                      ),
-                      SizedBox(height: 20),
-                      Text("Aktywność"),
-                      Text(
-                        student.points.isNotEmpty
-                            ? "${student.points}"
-                            : "Brak Aktywności",
-                        style: higherContentTextStyle(context),
-                      ),
-                      SizedBox(height: 50),
-                      Text(
-                        "Informacje dodatkowe",
-                        style: higherContentTextStyle(context),
-                      ),
-                      Text(
-                        student.phoneNumber == ''
-                            ? 'Numer Kontaktowy:   Brak'
-                            : 'Numer Kontaktowy:   ${student.phoneNumber}',
-                      ),
-                      Text(
-                        student.parentPhoneNumber == ''
-                            ? 'Numer Kontaktowy Matki:   Brak'
-                            : 'Numer Kontaktowy Matki:   ${student.parentPhoneNumber}',
-                      ),
-                      Text(
-                        student.parentPhoneNumber2 == ''
-                            ? 'Numer Kontaktowy Ojca:   Brak'
-                            : 'Numer Kontaktowy Ojca:   ${student.parentPhoneNumber}',
-                      ),
-                      //TO-DO ADD CLASS LISTING
-                    ],
+                    ),
                   ),
-                ),
+                ],
               )
               //Handle student being null by indicating a loading indicator and an error text appbar
               : Center(child: CircularProgressIndicator()),
