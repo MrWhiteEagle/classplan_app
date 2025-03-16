@@ -17,13 +17,18 @@ const ClassObjSchema = CollectionSchema(
   name: r'ClassObj',
   id: 519802763645775704,
   properties: {
-    r'name': PropertySchema(
+    r'careTeacher': PropertySchema(
       id: 0,
+      name: r'careTeacher',
+      type: IsarType.string,
+    ),
+    r'name': PropertySchema(
+      id: 1,
       name: r'name',
       type: IsarType.string,
     ),
     r'students': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'students',
       type: IsarType.longList,
     )
@@ -48,6 +53,7 @@ int _classObjEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  bytesCount += 3 + object.careTeacher.length * 3;
   bytesCount += 3 + object.name.length * 3;
   bytesCount += 3 + object.students.length * 8;
   return bytesCount;
@@ -59,8 +65,9 @@ void _classObjSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.name);
-  writer.writeLongList(offsets[1], object.students);
+  writer.writeString(offsets[0], object.careTeacher);
+  writer.writeString(offsets[1], object.name);
+  writer.writeLongList(offsets[2], object.students);
 }
 
 ClassObj _classObjDeserialize(
@@ -70,9 +77,10 @@ ClassObj _classObjDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = ClassObj();
+  object.careTeacher = reader.readString(offsets[0]);
   object.id = id;
-  object.name = reader.readString(offsets[0]);
-  object.students = reader.readLongList(offsets[1]) ?? [];
+  object.name = reader.readString(offsets[1]);
+  object.students = reader.readLongList(offsets[2]) ?? [];
   return object;
 }
 
@@ -86,6 +94,8 @@ P _classObjDeserializeProp<P>(
     case 0:
       return (reader.readString(offset)) as P;
     case 1:
+      return (reader.readString(offset)) as P;
+    case 2:
       return (reader.readLongList(offset) ?? []) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -181,6 +191,138 @@ extension ClassObjQueryWhere on QueryBuilder<ClassObj, ClassObj, QWhereClause> {
 
 extension ClassObjQueryFilter
     on QueryBuilder<ClassObj, ClassObj, QFilterCondition> {
+  QueryBuilder<ClassObj, ClassObj, QAfterFilterCondition> careTeacherEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'careTeacher',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ClassObj, ClassObj, QAfterFilterCondition>
+      careTeacherGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'careTeacher',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ClassObj, ClassObj, QAfterFilterCondition> careTeacherLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'careTeacher',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ClassObj, ClassObj, QAfterFilterCondition> careTeacherBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'careTeacher',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ClassObj, ClassObj, QAfterFilterCondition> careTeacherStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'careTeacher',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ClassObj, ClassObj, QAfterFilterCondition> careTeacherEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'careTeacher',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ClassObj, ClassObj, QAfterFilterCondition> careTeacherContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'careTeacher',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ClassObj, ClassObj, QAfterFilterCondition> careTeacherMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'careTeacher',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ClassObj, ClassObj, QAfterFilterCondition> careTeacherIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'careTeacher',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<ClassObj, ClassObj, QAfterFilterCondition>
+      careTeacherIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'careTeacher',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<ClassObj, ClassObj, QAfterFilterCondition> idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -513,6 +655,18 @@ extension ClassObjQueryLinks
     on QueryBuilder<ClassObj, ClassObj, QFilterCondition> {}
 
 extension ClassObjQuerySortBy on QueryBuilder<ClassObj, ClassObj, QSortBy> {
+  QueryBuilder<ClassObj, ClassObj, QAfterSortBy> sortByCareTeacher() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'careTeacher', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ClassObj, ClassObj, QAfterSortBy> sortByCareTeacherDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'careTeacher', Sort.desc);
+    });
+  }
+
   QueryBuilder<ClassObj, ClassObj, QAfterSortBy> sortByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -528,6 +682,18 @@ extension ClassObjQuerySortBy on QueryBuilder<ClassObj, ClassObj, QSortBy> {
 
 extension ClassObjQuerySortThenBy
     on QueryBuilder<ClassObj, ClassObj, QSortThenBy> {
+  QueryBuilder<ClassObj, ClassObj, QAfterSortBy> thenByCareTeacher() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'careTeacher', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ClassObj, ClassObj, QAfterSortBy> thenByCareTeacherDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'careTeacher', Sort.desc);
+    });
+  }
+
   QueryBuilder<ClassObj, ClassObj, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -555,6 +721,13 @@ extension ClassObjQuerySortThenBy
 
 extension ClassObjQueryWhereDistinct
     on QueryBuilder<ClassObj, ClassObj, QDistinct> {
+  QueryBuilder<ClassObj, ClassObj, QDistinct> distinctByCareTeacher(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'careTeacher', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<ClassObj, ClassObj, QDistinct> distinctByName(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -574,6 +747,12 @@ extension ClassObjQueryProperty
   QueryBuilder<ClassObj, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<ClassObj, String, QQueryOperations> careTeacherProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'careTeacher');
     });
   }
 

@@ -10,9 +10,12 @@ class ClassDatabase extends ChangeNotifier {
   final List<ClassObj> classList = [];
 
   //CREATE
-  Future<void> addClass(String className) async {
+  Future<void> addClass(String className, String careTeacher) async {
     //create a new class
-    final newClass = ClassObj()..name = className;
+    final newClass =
+        ClassObj()
+          ..name = className
+          ..careTeacher = careTeacher;
 
     //save to db
     await isarService.isar.writeTxn(
@@ -34,13 +37,18 @@ class ClassDatabase extends ChangeNotifier {
 
   //UPDATE
 
-  Future<void> updateClass(int id, String newName) async {
+  Future<void> updateClass(
+    int id,
+    String newName,
+    String newCareTeacher,
+  ) async {
     //get content of existing class
     final existingClass = await isarService.isar.classObjs.get(id);
 
     //if a class is not null, change its content to the new one, and save it in the db.
     if (existingClass != null) {
       existingClass.name = newName;
+      existingClass.careTeacher = newCareTeacher;
       await isarService.isar.writeTxn(
         () => isarService.isar.classObjs.put(existingClass),
       );

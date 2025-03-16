@@ -22,33 +22,38 @@ const StudentSchema = CollectionSchema(
       name: r'classIds',
       type: IsarType.longList,
     ),
-    r'lastName': PropertySchema(
+    r'grades': PropertySchema(
       id: 1,
+      name: r'grades',
+      type: IsarType.stringList,
+    ),
+    r'lastName': PropertySchema(
+      id: 2,
       name: r'lastName',
       type: IsarType.string,
     ),
     r'name': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'name',
       type: IsarType.string,
     ),
     r'parentPhoneNumber': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'parentPhoneNumber',
       type: IsarType.string,
     ),
     r'parentPhoneNumber2': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'parentPhoneNumber2',
       type: IsarType.string,
     ),
     r'phoneNumber': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'phoneNumber',
       type: IsarType.string,
     ),
     r'points': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'points',
       type: IsarType.stringList,
     )
@@ -74,6 +79,13 @@ int _studentEstimateSize(
 ) {
   var bytesCount = offsets.last;
   bytesCount += 3 + object.classIds.length * 8;
+  bytesCount += 3 + object.grades.length * 3;
+  {
+    for (var i = 0; i < object.grades.length; i++) {
+      final value = object.grades[i];
+      bytesCount += value.length * 3;
+    }
+  }
   bytesCount += 3 + object.lastName.length * 3;
   bytesCount += 3 + object.name.length * 3;
   bytesCount += 3 + object.parentPhoneNumber.length * 3;
@@ -96,12 +108,13 @@ void _studentSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeLongList(offsets[0], object.classIds);
-  writer.writeString(offsets[1], object.lastName);
-  writer.writeString(offsets[2], object.name);
-  writer.writeString(offsets[3], object.parentPhoneNumber);
-  writer.writeString(offsets[4], object.parentPhoneNumber2);
-  writer.writeString(offsets[5], object.phoneNumber);
-  writer.writeStringList(offsets[6], object.points);
+  writer.writeStringList(offsets[1], object.grades);
+  writer.writeString(offsets[2], object.lastName);
+  writer.writeString(offsets[3], object.name);
+  writer.writeString(offsets[4], object.parentPhoneNumber);
+  writer.writeString(offsets[5], object.parentPhoneNumber2);
+  writer.writeString(offsets[6], object.phoneNumber);
+  writer.writeStringList(offsets[7], object.points);
 }
 
 Student _studentDeserialize(
@@ -112,12 +125,13 @@ Student _studentDeserialize(
 ) {
   final object = Student();
   object.classIds = reader.readLongList(offsets[0]) ?? [];
-  object.lastName = reader.readString(offsets[1]);
-  object.name = reader.readString(offsets[2]);
-  object.parentPhoneNumber = reader.readString(offsets[3]);
-  object.parentPhoneNumber2 = reader.readString(offsets[4]);
-  object.phoneNumber = reader.readString(offsets[5]);
-  object.points = reader.readStringList(offsets[6]) ?? [];
+  object.grades = reader.readStringList(offsets[1]) ?? [];
+  object.lastName = reader.readString(offsets[2]);
+  object.name = reader.readString(offsets[3]);
+  object.parentPhoneNumber = reader.readString(offsets[4]);
+  object.parentPhoneNumber2 = reader.readString(offsets[5]);
+  object.phoneNumber = reader.readString(offsets[6]);
+  object.points = reader.readStringList(offsets[7]) ?? [];
   object.studentId = id;
   return object;
 }
@@ -132,7 +146,7 @@ P _studentDeserializeProp<P>(
     case 0:
       return (reader.readLongList(offset) ?? []) as P;
     case 1:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringList(offset) ?? []) as P;
     case 2:
       return (reader.readString(offset)) as P;
     case 3:
@@ -142,6 +156,8 @@ P _studentDeserializeProp<P>(
     case 5:
       return (reader.readString(offset)) as P;
     case 6:
+      return (reader.readString(offset)) as P;
+    case 7:
       return (reader.readStringList(offset) ?? []) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -372,6 +388,222 @@ extension StudentQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'classIds',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> gradesElementEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'grades',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition>
+      gradesElementGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'grades',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> gradesElementLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'grades',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> gradesElementBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'grades',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> gradesElementStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'grades',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> gradesElementEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'grades',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> gradesElementContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'grades',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> gradesElementMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'grades',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> gradesElementIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'grades',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition>
+      gradesElementIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'grades',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> gradesLengthEqualTo(
+      int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'grades',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> gradesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'grades',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> gradesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'grades',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> gradesLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'grades',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> gradesLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'grades',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> gradesLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'grades',
         lower,
         includeLower,
         upper,
@@ -1464,6 +1696,12 @@ extension StudentQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Student, Student, QDistinct> distinctByGrades() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'grades');
+    });
+  }
+
   QueryBuilder<Student, Student, QDistinct> distinctByLastName(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1519,6 +1757,12 @@ extension StudentQueryProperty
   QueryBuilder<Student, List<int>, QQueryOperations> classIdsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'classIds');
+    });
+  }
+
+  QueryBuilder<Student, List<String>, QQueryOperations> gradesProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'grades');
     });
   }
 

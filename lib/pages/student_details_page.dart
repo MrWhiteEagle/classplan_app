@@ -2,6 +2,7 @@ import 'package:classplan_new/logic/crud_students.dart';
 import 'package:classplan_new/models/student.dart';
 import 'package:classplan_new/models/student_database.dart';
 import 'package:classplan_new/themes/app_theme.dart';
+import 'package:classplan_new/widgets/studentDetailsCard.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,6 +16,12 @@ class StudentDetailsPage extends StatefulWidget {
 }
 
 class _StudentDetailsPageState extends State<StudentDetailsPage> {
+  final nameController = TextEditingController();
+  final lastNameController = TextEditingController();
+  final phoneNumberController = TextEditingController();
+  final parentPhoneNumberController = TextEditingController();
+  final parent2PhoneNumberController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -50,64 +57,15 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Card(
-                              surfaceTintColor:
-                                  Theme.of(context).colorScheme.primary,
-                              child: Container(
-                                padding: EdgeInsets.all(30),
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    Text(
-                                      student.name,
-                                      style: higherContentTextStyle(
-                                        context,
-                                      ).copyWith(fontSize: 23),
-                                    ),
-                                    Text(
-                                      student.lastName,
-                                      style: higherContentTextStyle(
-                                        context,
-                                      ).copyWith(fontSize: 23),
-                                    ),
-                                    SizedBox(height: 100),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
-                                          children: [
-                                            Text("Numer telefonu"),
-                                            Text(
-                                              student.phoneNumber != ''
-                                                  ? student.phoneNumber
-                                                  : "Nie podano",
-                                              style: higherContentTextStyle(
-                                                context,
-                                              ).copyWith(fontSize: 15),
-                                            ),
-                                          ],
-                                        ),
-                                        Column(
-                                          children: [
-                                            Text("Aktywność"),
-                                            Text(
-                                              student.points.isNotEmpty
-                                                  ? "${student.points}"
-                                                  : "Brak Aktywności",
-                                              style: higherContentTextStyle(
-                                                context,
-                                              ).copyWith(fontSize: 15),
-                                            ),
-                                          ],
-                                        ),
-                                        //TO-DO ADD CLASS LISTING
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
+                            StudentDetailsCard(
+                              student: student,
+                              nameController: nameController,
+                              lastNameController: lastNameController,
+                              phoneNumberController: phoneNumberController,
+                              parentPhoneNumberController:
+                                  parentPhoneNumberController,
+                              parent2PhoneNumberController:
+                                  parent2PhoneNumberController,
                             ),
                             SizedBox(height: 30),
                             Text(

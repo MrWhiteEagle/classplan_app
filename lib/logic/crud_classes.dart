@@ -23,7 +23,7 @@ void createClass(BuildContext context, TextEditingController textController) {
               child: Text("Utwórz", style: higherContentTextStyle(context)),
               onPressed: () {
                 //Add class to database
-                context.read<ClassDatabase>().addClass(textController.text);
+                context.read<ClassDatabase>().addClass(textController.text, '');
                 Navigator.pop(context);
                 textController.clear();
               },

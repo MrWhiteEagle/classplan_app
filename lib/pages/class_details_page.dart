@@ -10,11 +10,13 @@ import 'package:classplan_new/models/student_database.dart';
 class ClassDetailsPage extends StatefulWidget {
   final String className;
   final int classId;
+  final String careTeacher;
 
   const ClassDetailsPage({
     super.key,
     required this.className,
     required this.classId,
+    required this.careTeacher,
   });
 
   @override
@@ -82,7 +84,12 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                     Column(
                       children: [
                         Text("Wychowawca", textAlign: TextAlign.left),
-                        Text("TOBEADDED", textAlign: TextAlign.left),
+                        Text(
+                          widget.careTeacher == ''
+                              ? "Nie podano"
+                              : widget.careTeacher,
+                          textAlign: TextAlign.left,
+                        ),
                       ],
                     ),
                     Column(

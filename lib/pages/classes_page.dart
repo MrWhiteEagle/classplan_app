@@ -54,8 +54,12 @@ class _ClassesPageState extends State<ClassesPage> {
                 classObj.name,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              subtitle: Text("Wychowawca: TBA"),
-              trailing: Icon(Icons.edit_note),
+              subtitle: Text(
+                classObj.careTeacher == ''
+                    ? "Wychowawca: Nie podano"
+                    : "Wychowawca: $classObj",
+              ),
+              trailing: Icon(Icons.groups),
               onTap:
                   () => Navigator.push(
                     context,
@@ -64,6 +68,7 @@ class _ClassesPageState extends State<ClassesPage> {
                           (context) => ClassDetailsPage(
                             className: classObj.name,
                             classId: classObj.id,
+                            careTeacher: classObj.careTeacher,
                           ),
                     ),
                   ),

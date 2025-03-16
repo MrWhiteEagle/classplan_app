@@ -63,6 +63,29 @@ void createStudent(
   );
 }
 
+void updateStudent(
+  BuildContext context,
+  int studentId,
+  String newName,
+  String newLastName,
+  String newPhoneNumber,
+  String newParentPhoneNumber,
+  String newParentPhoneNumber2,
+  List<String> newpointList,
+  List<String> newGrades,
+) {
+  context.read<StudentDatabase>().updateStudent(
+    studentId,
+    newName,
+    newLastName,
+    newPhoneNumber,
+    newParentPhoneNumber,
+    newParentPhoneNumber2,
+    newpointList,
+    newGrades,
+  );
+}
+
 //Read students from class method
 void readStudentsFromClass(BuildContext context, int classId) {
   context.read<StudentDatabase>().readStudents(classId);
