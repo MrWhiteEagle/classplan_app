@@ -1,3 +1,4 @@
+import 'package:classplan_new/logic/crud_students.dart';
 import 'package:classplan_new/models/student.dart';
 import 'package:classplan_new/themes/app_theme.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ class StudentDetailsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<String> pointlist = List.from(student.points);
     return Card(
       surfaceTintColor: Theme.of(context).colorScheme.primary,
       child: Container(
@@ -92,7 +94,21 @@ class StudentDetailsCard extends StatelessWidget {
                                   child: Text("Anuluj"),
                                 ),
                                 MaterialButton(
-                                  onPressed: () => Navigator.pop(context),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    updateStudent(
+                                      context,
+                                      student.studentId,
+                                      nameController.text,
+                                      lastNameController.text,
+                                      student.phoneNumber,
+                                      student.parentPhoneNumber,
+                                      student.parentPhoneNumber2,
+                                      student.points,
+                                      student.grades,
+                                      student.gradesIdentifiers,
+                                    );
+                                  },
                                   child: Text(
                                     "Zapisz",
                                     style: higherContentTextStyle(context),
@@ -155,8 +171,25 @@ class StudentDetailsCard extends StatelessWidget {
                                   child: Text("Anuluj"),
                                 ),
                                 MaterialButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: Text("Zapisz"),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    updateStudent(
+                                      context,
+                                      student.studentId,
+                                      student.name,
+                                      student.lastName,
+                                      phoneNumberController.text,
+                                      parentPhoneNumberController.text,
+                                      parent2PhoneNumberController.text,
+                                      student.points,
+                                      student.grades,
+                                      student.gradesIdentifiers,
+                                    );
+                                  },
+                                  child: Text(
+                                    "Zapisz",
+                                    style: higherContentTextStyle(context),
+                                  ),
                                 ),
                               ],
                             );
@@ -185,10 +218,15 @@ class StudentDetailsCard extends StatelessWidget {
                 ),
                 Column(
                   children: [
-                    Text("Aktywność"),
+                    TextButton.icon(
+                      label: Text("Aktywność"),
+                      icon: Icon(Icons.add_circle_outline),
+                      onPressed:
+                          () => showActivityEditDialog(context, pointlist),
+                    ),
                     Text(
                       student.points.isNotEmpty
-                          ? "${student.points}"
+                          ? "${student.points.join(" ")}"
                           : "Brak Aktywności",
                       style: higherContentTextStyle(
                         context,
@@ -204,4 +242,131 @@ class StudentDetailsCard extends StatelessWidget {
       ),
     );
   }
+
+  Future showActivityEditDialog(
+    BuildContext context,
+    List<String> pointlist,
+  ) => showDialog(
+    context: context,
+    builder:
+        (context) => StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              icon: Icon(
+                Icons.add_circle_outlined,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              title: Text("Zmień aktywność"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        //WATCH FOR DEBBUGING hardcoded width might fuck up grid spacing on different resolutions (but might not)
+                        width: 230,
+                        height: 250,
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(maxHeight: 300),
+                          child: GridView.builder(
+                            shrinkWrap: true,
+                            itemCount: pointlist.length,
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 5,
+                                ),
+                            itemBuilder: (context, index) {
+                              return GridTile(
+                                child: IconButton(
+                                  onPressed: () {},
+                                  icon: Icon(
+                                    pointlist[index] == '+'
+                                        ? Icons.add
+                                        : Icons.remove,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            pointlist.add('+');
+                            setState(() {});
+                          },
+                          icon: Icon(
+                            Icons.add_circle_outline,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                        TextButton.icon(
+                          label: Text("Wyczyść"),
+                          onPressed: () {
+                            pointlist.clear();
+                            setState(() {});
+                          },
+                          icon: Icon(Icons.clear),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            pointlist.add('-');
+                            setState(() {});
+                          },
+                          icon: Icon(
+                            Icons.remove_circle_outline,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                MaterialButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    pointlist.clear();
+                  },
+                  child: Text("Anuluj"),
+                ),
+                MaterialButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    updateStudent(
+                      context,
+                      student.studentId,
+                      student.name,
+                      student.lastName,
+                      student.phoneNumber,
+                      student.parentPhoneNumber,
+                      student.parentPhoneNumber2,
+                      pointlist,
+                      student.grades,
+                      student.gradesIdentifiers,
+                    );
+                  },
+                  child: Text(
+                    "Zapisz",
+                    style: higherContentTextStyle(
+                      context,
+                    ).copyWith(fontSize: 14),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+  );
 }

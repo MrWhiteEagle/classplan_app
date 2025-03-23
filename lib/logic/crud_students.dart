@@ -73,6 +73,7 @@ void updateStudent(
   String newParentPhoneNumber2,
   List<String> newpointList,
   List<String> newGrades,
+  List<String> newGradesIdentifiers,
 ) {
   context.read<StudentDatabase>().updateStudent(
     studentId,
@@ -83,6 +84,7 @@ void updateStudent(
     newParentPhoneNumber2,
     newpointList,
     newGrades,
+    newGradesIdentifiers,
   );
 }
 

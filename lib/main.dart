@@ -16,7 +16,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => StudentDatabase()),
       ],
       child: ClassPlanApp(),
-    )
+    ),
   );
 }
 
@@ -29,8 +29,8 @@ class ClassPlanApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: LoginPage(),
       theme: lightMode,
-      darkTheme: darkMode,
-      
+
+      // darkTheme: darkMode,
     );
   }
 }

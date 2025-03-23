@@ -13,4 +13,5 @@ class Student {
   String parentPhoneNumber2 = '';
   List<String> points = [];
   List<String> grades = [];
+  List<String> gradesIdentifiers = [];
 }

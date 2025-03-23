@@ -67,6 +67,7 @@ class StudentDatabase extends ChangeNotifier {
     String newParentPhoneNumber2,
     List<String> newpointList,
     List<String> newGrades,
+    List<String> newGradesIdentifiers,
   ) async {
     final existingStudent = await isarService.isar.students.get(studentId);
     if (existingStudent != null) {
@@ -77,9 +78,12 @@ class StudentDatabase extends ChangeNotifier {
       existingStudent.parentPhoneNumber2 = newParentPhoneNumber2;
       existingStudent.points = newpointList;
       existingStudent.grades = newGrades;
+      existingStudent.gradesIdentifiers = newGradesIdentifiers;
       await isarService.isar.writeTxn(
         () => isarService.isar.students.put(existingStudent),
       );
+      notifyListeners();
+      fetchStudentDetails(studentId);
     }
   }
 

@@ -67,8 +67,8 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
                               parent2PhoneNumberController:
                                   parent2PhoneNumberController,
                             ),
-                            SizedBox(height: 30),
-                            Text(
+                            const SizedBox(height: 30),
+                            const Text(
                               "Informacje dodatkowe",
                               textAlign: TextAlign.center,
                               style: TextStyle(
@@ -98,6 +98,35 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
                               style: higherContentTextStyle(
                                 context,
                               ).copyWith(fontSize: 13),
+                            ),
+                            const SizedBox(height: 50),
+                            const Text(
+                              "Oceny",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                            ),
+                            Flexible(
+                              child: ListView.builder(
+                                padding: EdgeInsets.all(10),
+                                itemCount: student.gradesIdentifiers.length,
+                                itemBuilder: (context, index) {
+                                  final gradeIds = student.gradesIdentifiers;
+                                  final grades = student.grades;
+
+                                  return Card(
+                                    elevation: 5,
+                                    child: Column(
+                                      children: [
+                                        Text(gradeIds[index]),
+                                        Text(grades[index]),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           ],
                         ),

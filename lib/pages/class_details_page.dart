@@ -116,11 +116,19 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                       '${student.name} ${student.lastName}',
                       style: higherContentTextStyle(context),
                     ),
-                    subtitle: Text(
-                      student.points.isNotEmpty
-                          ? 'Aktywność: ${student.points}'
-                          : 'Brak aktywności',
-                      textAlign: TextAlign.right,
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text('Aktywność: '),
+                        Text(
+                          student.points.isNotEmpty
+                              ? student.points.join(" ")
+                              : 'Brak Aktywności',
+                          style: higherContentTextStyle(
+                            context,
+                          ).copyWith(fontSize: 14, fontWeight: FontWeight.bold),
+                        ),
+                      ],
                     ),
                     onTap:
                         () => Navigator.push(
@@ -132,7 +140,21 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                               );
                             },
                           ),
-                        ),
+                        ).then((_) {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return ClassDetailsPage(
+                                  className: widget.className,
+                                  classId: widget.classId,
+                                  careTeacher: widget.careTeacher,
+                                );
+                              },
+                            ),
+                          );
+                        }),
                   ),
                 );
               },
