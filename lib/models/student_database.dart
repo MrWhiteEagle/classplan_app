@@ -57,9 +57,37 @@ class StudentDatabase extends ChangeNotifier {
     }
   }
 
+  //DELETE ALL CLASS ID'S FROM ALL STUDENT'S CLASSLIST (TYPICALLY DURING CLASS DELETION)
+  Future<void> deleteClassFromAllStudents(Id classId) async {
+    //Fetch all student's containing classId
+    List<Student> fetchedStudents =
+        await isarService.isar.students
+            .filter()
+            .classIdsElementEqualTo(classId)
+            .findAll();
+    if (fetchedStudents.isNotEmpty) {
+      for (Student student in fetchedStudents) {
+        List<int> updatedClassList = List.from(student.classIds);
+        print(
+          "Removing $classId from ${student.name} ${student.lastName} ${student.studentId}",
+        );
+        print("List ClassId: ${student.classIds}");
+        updatedClassList.remove(classId);
+        print("updated List: $updatedClassList");
+        student.classIds = updatedClassList;
+        await isarService.isar.writeTxn(
+          () => isarService.isar.students.put(student),
+        );
+      }
+    } else {
+      return;
+    }
+  }
+
   //UPDATE STUDENT
   Future<void> updateStudent(
     Id studentId,
+    List<int> newClassIds,
     String newName,
     String newLastName,
     String newPhoneNumber,
@@ -72,6 +100,7 @@ class StudentDatabase extends ChangeNotifier {
     final existingStudent = await isarService.isar.students.get(studentId);
     if (existingStudent != null) {
       existingStudent.name = newName;
+      existingStudent.classIds = newClassIds;
       existingStudent.lastName = newLastName;
       existingStudent.phoneNumber = newPhoneNumber;
       existingStudent.parentPhoneNumber = newParentPhoneNumber;
@@ -93,5 +122,13 @@ class StudentDatabase extends ChangeNotifier {
       () => isarService.isar.students.delete(studentId),
     );
     readStudents(null);
+  }
+
+  //RESET STUDENT DATABASE
+  Future<void> resetStudentDatabase() async {
+    fetchedStudent = null;
+    studentList.clear();
+    await isarService.isar.writeTxn(() => isarService.isar.students.clear());
+    notifyListeners();
   }
 }

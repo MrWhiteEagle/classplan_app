@@ -1,7 +1,8 @@
-import 'package:classplan_new/logic/crud_students.dart';
 import 'package:classplan_new/models/student.dart';
+import 'package:classplan_new/models/student_database.dart';
 import 'package:classplan_new/themes/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class StudentDetailsCard extends StatelessWidget {
   const StudentDetailsCard({
@@ -96,9 +97,12 @@ class StudentDetailsCard extends StatelessWidget {
                                 MaterialButton(
                                   onPressed: () {
                                     Navigator.pop(context);
-                                    updateStudent(
+                                    Provider.of<StudentDatabase>(
                                       context,
+                                      listen: false,
+                                    ).updateStudent(
                                       student.studentId,
+                                      student.classIds,
                                       nameController.text,
                                       lastNameController.text,
                                       student.phoneNumber,
@@ -173,9 +177,12 @@ class StudentDetailsCard extends StatelessWidget {
                                 MaterialButton(
                                   onPressed: () {
                                     Navigator.pop(context);
-                                    updateStudent(
+                                    Provider.of<StudentDatabase>(
                                       context,
+                                      listen: false,
+                                    ).updateStudent(
                                       student.studentId,
+                                      student.classIds,
                                       student.name,
                                       student.lastName,
                                       phoneNumberController.text,
@@ -226,7 +233,7 @@ class StudentDetailsCard extends StatelessWidget {
                     ),
                     Text(
                       student.points.isNotEmpty
-                          ? "${student.points.join(" ")}"
+                          ? student.points.join(" ")
                           : "Brak Aktywności",
                       style: higherContentTextStyle(
                         context,
@@ -344,9 +351,12 @@ class StudentDetailsCard extends StatelessWidget {
                 MaterialButton(
                   onPressed: () {
                     Navigator.pop(context);
-                    updateStudent(
+                    Provider.of<StudentDatabase>(
                       context,
+                      listen: false,
+                    ).updateStudent(
                       student.studentId,
+                      student.classIds,
                       student.name,
                       student.lastName,
                       student.phoneNumber,

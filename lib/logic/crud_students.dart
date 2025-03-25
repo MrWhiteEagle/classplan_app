@@ -66,6 +66,7 @@ void createStudent(
 void updateStudent(
   BuildContext context,
   int studentId,
+  List<int> newClassIds,
   String newName,
   String newLastName,
   String newPhoneNumber,
@@ -77,6 +78,7 @@ void updateStudent(
 ) {
   context.read<StudentDatabase>().updateStudent(
     studentId,
+    newClassIds,
     newName,
     newLastName,
     newPhoneNumber,
