@@ -1,5 +1,8 @@
+import 'package:classplan_new/models/grade.dart';
+import 'package:classplan_new/models/grade_database.dart';
 import 'package:classplan_new/models/student_database.dart';
 import 'package:classplan_new/themes/app_theme.dart';
+import 'package:classplan_new/widgets/createGrade.dart';
 import 'package:classplan_new/widgets/studentDetailsCard.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +22,7 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
   final phoneNumberController = TextEditingController();
   final parentPhoneNumberController = TextEditingController();
   final parent2PhoneNumberController = TextEditingController();
+  final gradeIdCrtl = TextEditingController();
 
   @override
   void initState() {
@@ -27,6 +31,10 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
       context,
       listen: false,
     ).fetchStudentDetails(widget.studentId);
+    Provider.of<GradeDatabase>(
+      context,
+      listen: false,
+    ).readStudentGrades(widget.studentId);
   }
 
   @override
@@ -94,8 +102,8 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
                                     context,
                                   ).copyWith(fontSize: 13),
                                 ),
-                                SizedBox(height: 20),
-                                Text("Numer telefonu ojca"),
+                                const SizedBox(height: 20),
+                                const Text("Numer telefonu ojca"),
                                 Text(
                                   studentDatabase
                                               .fetchedStudent!
@@ -110,43 +118,84 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
                                   ).copyWith(fontSize: 13),
                                 ),
                                 const SizedBox(height: 50),
-                                const Text(
-                                  "Oceny",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
+                                Card(
+                                  surfaceTintColor:
+                                      Theme.of(context).colorScheme.primary,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      const Text(
+                                        "Oceny",
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                      TextButton.icon(
+                                        onPressed:
+                                            () => createGrade(
+                                              context,
+                                              gradeIdCrtl,
+                                              studentDatabase.fetchedStudent!,
+                                            ),
+                                        label: Text("Dodaj"),
+                                        icon: Icon(Icons.edit),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                Flexible(
-                                  child: ListView.builder(
-                                    padding: EdgeInsets.all(10),
-                                    itemCount:
-                                        studentDatabase
-                                            .fetchedStudent!
-                                            .gradesIdentifiers
-                                            .length,
-                                    itemBuilder: (context, index) {
-                                      final gradeIds =
-                                          studentDatabase
-                                              .fetchedStudent!
-                                              .gradesIdentifiers;
-                                      final grades =
-                                          studentDatabase
-                                              .fetchedStudent!
-                                              .grades;
-
-                                      return Card(
-                                        elevation: 5,
-                                        child: Column(
-                                          children: [
-                                            Text(gradeIds[index]),
-                                            Text(grades[index]),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  ),
+                                Consumer<GradeDatabase>(
+                                  builder: (context, studentDatabase, child) {
+                                    return Expanded(
+                                      child: ListView.builder(
+                                        itemCount:
+                                            studentDatabase
+                                                .fetchedGradeList
+                                                .length,
+                                        itemBuilder: (context, index) {
+                                          return Card(
+                                            surfaceTintColor:
+                                                Theme.of(
+                                                  context,
+                                                ).colorScheme.primary,
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  studentDatabase
+                                                          .fetchedGradeList[index]
+                                                          .grade +
+                                                      studentDatabase
+                                                          .fetchedGradeList[index]
+                                                          .gradeAdd,
+                                                ),
+                                                Text(
+                                                  studentDatabase
+                                                      .fetchedGradeList[index]
+                                                      .title,
+                                                ),
+                                                Text(
+                                                  fetchedGradeTypeToString(
+                                                    studentDatabase
+                                                        .fetchedGradeList[index]
+                                                        .type,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
                                 ),
                               ],
                             ),
@@ -160,5 +209,20 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
         );
       },
     );
+  }
+}
+
+String fetchedGradeTypeToString(GradeType type) {
+  switch (type) {
+    case GradeType.test:
+      return 'Test';
+    case GradeType.quiz:
+      return 'Kartkówka';
+    case GradeType.activity:
+      return 'Aktywność';
+    case GradeType.lesson:
+      return 'P.N.L';
+    case GradeType.other:
+      return 'Inne';
   }
 }

@@ -109,8 +109,6 @@ class StudentDetailsCard extends StatelessWidget {
                                       student.parentPhoneNumber,
                                       student.parentPhoneNumber2,
                                       student.points,
-                                      student.grades,
-                                      student.gradesIdentifiers,
                                     );
                                   },
                                   child: Text(
@@ -189,8 +187,6 @@ class StudentDetailsCard extends StatelessWidget {
                                       parentPhoneNumberController.text,
                                       parent2PhoneNumberController.text,
                                       student.points,
-                                      student.grades,
-                                      student.gradesIdentifiers,
                                     );
                                   },
                                   child: Text(
@@ -363,8 +359,6 @@ class StudentDetailsCard extends StatelessWidget {
                       student.parentPhoneNumber,
                       student.parentPhoneNumber2,
                       pointlist,
-                      student.grades,
-                      student.gradesIdentifiers,
                     );
                   },
                   child: Text(

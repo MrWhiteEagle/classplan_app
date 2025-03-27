@@ -68,12 +68,7 @@ class StudentDatabase extends ChangeNotifier {
     if (fetchedStudents.isNotEmpty) {
       for (Student student in fetchedStudents) {
         List<int> updatedClassList = List.from(student.classIds);
-        print(
-          "Removing $classId from ${student.name} ${student.lastName} ${student.studentId}",
-        );
-        print("List ClassId: ${student.classIds}");
         updatedClassList.remove(classId);
-        print("updated List: $updatedClassList");
         student.classIds = updatedClassList;
         await isarService.isar.writeTxn(
           () => isarService.isar.students.put(student),
@@ -94,8 +89,6 @@ class StudentDatabase extends ChangeNotifier {
     String newParentPhoneNumber,
     String newParentPhoneNumber2,
     List<String> newpointList,
-    List<String> newGrades,
-    List<String> newGradesIdentifiers,
   ) async {
     final existingStudent = await isarService.isar.students.get(studentId);
     if (existingStudent != null) {
@@ -106,8 +99,6 @@ class StudentDatabase extends ChangeNotifier {
       existingStudent.parentPhoneNumber = newParentPhoneNumber;
       existingStudent.parentPhoneNumber2 = newParentPhoneNumber2;
       existingStudent.points = newpointList;
-      existingStudent.grades = newGrades;
-      existingStudent.gradesIdentifiers = newGradesIdentifiers;
       await isarService.isar.writeTxn(
         () => isarService.isar.students.put(existingStudent),
       );

@@ -1,3 +1,4 @@
+import 'package:classplan_new/models/grade.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:classplan_new/models/class.dart';
@@ -19,6 +20,7 @@ class IsarService {
       isar = await Isar.open([
         ClassObjSchema,
         StudentSchema,
+        GradeSchema,
       ], directory: dir.path);
     } else {
       isar = Isar.getInstance()!;
