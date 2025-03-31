@@ -63,7 +63,10 @@ Future gradeDetailsDialog(context, Grade grade, studentId) {
               color: Theme.of(context).colorScheme.primary,
             ),
             TextButton.icon(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pop(context);
+                editGradeAlert(context, grade, studentId);
+              },
               label: Text(
                 'Edytuj',
                 style: tertiaryBoldTextStyle(context).copyWith(fontSize: 18),
@@ -79,7 +82,7 @@ Future gradeDetailsDialog(context, Grade grade, studentId) {
 }
 
 Future editGradeAlert(context, Grade grade, int studentId) {
-  TextEditingController gradeIdCtrl = TextEditingController();
+  TextEditingController gradeIdCtrl = TextEditingController(text: grade.title);
   Set<String> gradeTypeSelection = {gradeTypeToString(grade.type)};
   return showDialog(
     context: context,
@@ -131,8 +134,6 @@ Future editGradeAlert(context, Grade grade, int studentId) {
                     controller: gradeIdCtrl,
                     style: primaryBoldTextStyle(context).copyWith(fontSize: 16),
                     decoration: InputDecoration(
-                      hintText: "np. Praca na lekcji 1",
-                      hintStyle: TextStyle(color: Colors.grey.shade400),
                       enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.grey.shade500),
                       ),
@@ -143,6 +144,7 @@ Future editGradeAlert(context, Grade grade, int studentId) {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       DropdownMenu(
+                        initialSelection: int.tryParse(grade.grade),
                         hintText: 'Ocena',
                         textStyle: primaryBoldTextStyle(
                           context,
@@ -300,6 +302,7 @@ Future editGradeAlert(context, Grade grade, int studentId) {
                     },
                   ),
                   Text(
+                    //? DELETE BEFORE SHIPPING
                     'Ocena: ${grade.grade + grade.gradeAdd} typ ${grade.type}',
                   ),
                 ],
@@ -314,7 +317,17 @@ Future editGradeAlert(context, Grade grade, int studentId) {
                 ),
                 MaterialButton(
                   onPressed: () {
-                    //UPDATE ADD PLS NO FORGET
+                    Provider.of<GradeDatabase>(
+                      context,
+                      listen: false,
+                    ).updateGrade(
+                      grade.gradeId,
+                      studentId,
+                      gradeIdCtrl.text,
+                      grade.type,
+                      grade.grade,
+                      grade.gradeAdd,
+                    );
                     Navigator.pop(context);
                   },
                   child: Text(
@@ -344,7 +357,6 @@ class GradeAddTriStateWidget extends StatefulWidget {
 class _GradeAddTriStateWidgetState extends State<GradeAddTriStateWidget> {
   //initial value + variable for storing;
   late String localGradeAdd;
-  String valueForParent = '';
 
   @override
   void initState() {
@@ -354,7 +366,7 @@ class _GradeAddTriStateWidgetState extends State<GradeAddTriStateWidget> {
 
   void toggleState() {
     setState(() {
-      switch (widget.gradeAdd) {
+      switch (localGradeAdd) {
         case '-':
           localGradeAdd = '';
         case '':
@@ -364,7 +376,7 @@ class _GradeAddTriStateWidgetState extends State<GradeAddTriStateWidget> {
       }
       ;
     });
-    widget.onUpdate(valueForParent);
+    widget.onUpdate(localGradeAdd);
   }
 
   IconData getIconForState() {
