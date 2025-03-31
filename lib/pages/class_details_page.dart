@@ -33,22 +33,27 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add, size: 30),
+        onPressed:
+            () => addStudentDialog(
+              context,
+              nameController,
+              lastNameController,
+              widget.classId,
+            ),
+      ),
       appBar: AppBar(
+        leading: BackButton(color: Theme.of(context).colorScheme.onPrimary),
+        backgroundColor: Theme.of(context).colorScheme.primary,
         centerTitle: false,
-        title: Text("Informacje o klasie id: ${widget.classId}"),
+        title: Text(
+          "Informacje o klasie",
+          style: onPrimaryBoldTextStyle(context),
+        ),
         actions: [
           IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () {
-              addStudentDialog(
-                context,
-                nameController,
-                lastNameController,
-                widget.classId,
-              );
-            },
-          ),
-          IconButton(
+            color: Theme.of(context).colorScheme.onPrimary,
             onPressed: () {
               Provider.of<StudentDatabase>(
                 context,
@@ -72,14 +77,14 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
             children: [
               Container(
                 padding: EdgeInsets.all(15),
-                color: Theme.of(context).colorScheme.primary,
+                color: Theme.of(context).colorScheme.primaryContainer,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
                       'Klasa ${widget.className}',
                       textAlign: TextAlign.center,
-                      style: onPrimaryTextStyle(context),
+                      style: onPrimaryBoldTextStyle(context),
                     ),
                     SizedBox(height: 50),
                     Row(
@@ -87,24 +92,54 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                       children: [
                         Column(
                           children: [
-                            Text("Wychowawca", textAlign: TextAlign.left),
+                            Text(
+                              "Wychowawca",
+                              textAlign: TextAlign.left,
+                              style: onPrimaryBoldContainerTextStyle(
+                                context,
+                              ).copyWith(fontSize: 18),
+                            ),
                             Text(
                               widget.careTeacher == ''
                                   ? "Nie podano"
                                   : widget.careTeacher,
                               textAlign: TextAlign.left,
+                              style: onPrimaryBoldContainerTextStyle(
+                                context,
+                              ).copyWith(fontSize: 15),
                             ),
                           ],
                         ),
                         Column(
                           children: [
-                            Text("Liczba uczniów"),
-                            Text(studentDatabase.studentList.length.toString()),
+                            Text(
+                              "Liczba uczniów",
+                              style: onPrimaryBoldContainerTextStyle(
+                                context,
+                              ).copyWith(fontSize: 18),
+                            ),
+                            Text(
+                              studentDatabase.studentList.length.toString(),
+                              style: secondaryBoldContainerTextStyle(
+                                context,
+                              ).copyWith(fontSize: 15),
+                            ),
                           ],
                         ),
                       ],
                     ),
                   ],
+                ),
+              ),
+              Card(
+                color: Theme.of(context).colorScheme.primary,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'Lista uczniów',
+                    textAlign: TextAlign.center,
+                    style: onPrimaryBoldTextStyle(context),
+                  ),
                 ),
               ),
               Flexible(
@@ -113,39 +148,54 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                   itemBuilder: (context, index) {
                     final student = studentDatabase.studentList[index];
                     return Card(
-                      surfaceTintColor: Theme.of(context).colorScheme.primary,
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.primary,
+                          width: 3,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
                       elevation: 5,
-                      child: ListTile(
-                        title: Text(
-                          '${student.name} ${student.lastName}',
-                          style: higherContentTextStyle(context),
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text('Aktywność: '),
-                            Text(
-                              student.points.isNotEmpty
-                                  ? student.points.join(" ")
-                                  : 'Brak Aktywności',
-                              style: higherContentTextStyle(context).copyWith(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: ListTile(
+                          title: Text(
+                            '${student.name} ${student.lastName}',
+                            style: higherContentTextStyle(context),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                'Aktywność: ',
+                                style: primaryBoldTextStyle(
+                                  context,
+                                ).copyWith(fontSize: 15),
                               ),
-                            ),
-                          ],
-                        ),
-                        onTap:
-                            () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return StudentDetailsPage(
-                                    studentId: student.studentId,
-                                  );
-                                },
+                              Text(
+                                student.points.isNotEmpty
+                                    ? student.points.join(" ")
+                                    : 'Brak Aktywności',
+                                style: primaryBoldTextStyle(context).copyWith(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
+                            ],
+                          ),
+                          onTap:
+                              () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return StudentDetailsPage(
+                                      studentId: student.studentId,
+                                    );
+                                  },
+                                ),
+                              ),
+                        ),
                       ),
                     );
                   },
@@ -219,3 +269,5 @@ void addStudentDialog(
         ),
   );
 }
+
+deletionConfirmationStudent() {}

@@ -20,8 +20,10 @@ class _ClassesPageState extends State<ClassesPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Lista klas"),
-        titleTextStyle: onPrimaryTextStyle(context),
+        titleTextStyle: onPrimaryBoldTextStyle(context),
+        centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.primary,
+        leading: BackButton(color: Theme.of(context).colorScheme.onPrimary),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => createClass(context, textController),
@@ -33,7 +35,7 @@ class _ClassesPageState extends State<ClassesPage> {
           //Read classes on every rebuild
           classDatabase.readClasses();
           return ListView.builder(
-            padding: EdgeInsets.all(15),
+            padding: EdgeInsets.all(10),
             itemCount: classDatabase.classList.length,
             itemBuilder: (context, index) {
               //get every class iteration
@@ -42,18 +44,26 @@ class _ClassesPageState extends State<ClassesPage> {
               //return every class as a card
               return Card(
                 elevation: 5,
-                surfaceTintColor: Theme.of(context).colorScheme.primary,
+                color: Theme.of(context).colorScheme.primaryContainer,
                 child: ListTile(
                   title: Text(
                     classObj.name,
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: onPrimaryBoldContainerTextStyle(
+                      context,
+                    ).copyWith(fontSize: 20),
                   ),
                   subtitle: Text(
                     classObj.careTeacher == ''
                         ? "Wychowawca: Nie podano"
                         : "Wychowawca: ${classObj.careTeacher}",
+                    style: onPrimaryBoldContainerTextStyle(
+                      context,
+                    ).copyWith(fontSize: 16),
                   ),
-                  trailing: Icon(Icons.groups),
+                  trailing: Icon(
+                    Icons.groups,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  ),
                   onTap:
                       () => Navigator.push(
                         context,
@@ -81,18 +91,37 @@ void createClass(BuildContext context, TextEditingController textController) {
     context: context,
     builder:
         (context) => AlertDialog(
-          title: Text("Nazwij nową klasę:"),
+          icon: Icon(
+            Icons.add,
+            color: Theme.of(context).colorScheme.tertiaryContainer,
+          ),
+          title: Text(
+            "Nazwij nową klasę:",
+            style: primaryBoldTextStyle(context).copyWith(fontSize: 20),
+          ),
           content: TextField(controller: textController),
           actions: [
             MaterialButton(
-              child: const Text("Anuluj"),
+              child: Text(
+                "Anuluj",
+                style: onSurfaceTextStyle(context).copyWith(fontSize: 18),
+              ),
               onPressed: () {
                 Navigator.pop(context);
                 textController.clear();
               },
             ),
-            MaterialButton(
-              child: Text("Utwórz", style: higherContentTextStyle(context)),
+            TextButton.icon(
+              label: Text(
+                "Utwórz",
+                style: tertiaryBoldContainerTextStyle(
+                  context,
+                ).copyWith(fontSize: 18),
+              ),
+              icon: Icon(
+                Icons.add,
+                color: Theme.of(context).colorScheme.tertiaryContainer,
+              ),
               onPressed: () {
                 //Add class to database
                 Provider.of<ClassDatabase>(

@@ -6,6 +6,5 @@ part 'class.g.dart';
 class ClassObj {
   Id id = Isar.autoIncrement;
   late String name;
-  List<int> students = [];
   late String careTeacher;
 }

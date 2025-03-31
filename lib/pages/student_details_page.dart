@@ -52,6 +52,20 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
                   : 'Błąd, Nie można załadować informacji',
               style: onPrimaryBoldTextStyle(context),
             ),
+            actions: [
+              IconButton(
+                onPressed:
+                    () => deletionConfirmationDialog(
+                      context,
+                      studentDatabase.fetchedStudent!.studentId,
+                      '${studentDatabase.fetchedStudent!.name} ${studentDatabase.fetchedStudent!.lastName}',
+                    ),
+                icon: Icon(
+                  Icons.delete,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+              ),
+            ],
             backgroundColor: Theme.of(context).colorScheme.primary,
           ),
           body:
@@ -326,4 +340,59 @@ Text returnGradeTypeOnCard(GradeType type) {
         ),
       );
   }
+}
+
+Future deletionConfirmationDialog(context, int studentId, String studentname) {
+  return showDialog(
+    context: context,
+    builder:
+        (context) => AlertDialog(
+          icon: Icon(Icons.delete, color: Theme.of(context).colorScheme.error),
+          title: Text(
+            'Usuwanie ucznia',
+            style: errorBoldTextStyle(context).copyWith(fontSize: 20),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Czy na pewno chcesz usunąć $studentname?',
+                style: onSurfaceTextStyle(context).copyWith(fontSize: 20),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+          actions: [
+            MaterialButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(
+                'Anuluj',
+                style: onSurfaceTextStyle(context).copyWith(fontSize: 18),
+              ),
+            ),
+            TextButton.icon(
+              onPressed: () {
+                Navigator.pop(context);
+                Provider.of<GradeDatabase>(
+                  context,
+                  listen: false,
+                ).deleteAllStudentGrades(studentId);
+                Provider.of<StudentDatabase>(
+                  context,
+                  listen: false,
+                ).deleteStudent(studentId);
+                Navigator.pop(context);
+              },
+              label: Text(
+                'Usuń',
+                style: errorBoldTextStyle(context).copyWith(fontSize: 18),
+              ),
+              icon: Icon(
+                Icons.delete_forever,
+                color: Theme.of(context).colorScheme.error,
+              ),
+            ),
+          ],
+        ),
+  );
 }

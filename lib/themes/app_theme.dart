@@ -262,3 +262,15 @@ TextStyle tertiaryBoldContainerTextStyle(BuildContext context) {
     fontWeight: FontWeight.bold,
   );
 }
+
+TextStyle errorBoldTextStyle(BuildContext context) {
+  return TextStyle(
+    fontSize: 25,
+    color: Theme.of(context).colorScheme.error,
+    fontWeight: FontWeight.bold,
+  );
+}
+
+TextStyle errorTextStyle(BuildContext context) {
+  return TextStyle(fontSize: 25, color: Theme.of(context).colorScheme.error);
+}

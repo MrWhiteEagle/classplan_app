@@ -95,16 +95,14 @@ class GradeDatabase extends ChangeNotifier {
             .filter()
             .studentIdEqualTo(studentId)
             .findAll();
-    if (fetchedGrades != null) {
-      debugPrint('Found grades for deletion!');
-      for (Grade grade in fetchedGrades) {
-        debugPrint('Deleting grade: ${grade.gradeId} ${grade.title}...');
-        isarService.isar.writeTxn(
-          () => isarService.isar.grades.delete(grade.gradeId),
-        );
-      }
-      debugPrint('Deletion process finished.');
+    debugPrint('Found grades for deletion!');
+    for (Grade grade in fetchedGrades) {
+      debugPrint('Deleting grade: ${grade.gradeId} ${grade.title}...');
+      isarService.isar.writeTxn(
+        () => isarService.isar.grades.delete(grade.gradeId),
+      );
     }
+    debugPrint('Deletion process finished.');
   }
 }
 

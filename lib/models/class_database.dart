@@ -66,16 +66,16 @@ class ClassDatabase extends ChangeNotifier {
 
   //ADD STUDENT TO CLASS
   //NOT USED, ADDS STUDENT TO CLASS'S STUDENTLIST BUT A SEARCH OF STUDENTS FROM CLASS IS PERFORMED USING THEIR BOUND CLASSES IN CLASS LIST
-  Future<void> addStudent(int id, int studentId) async {
-    final existingClass = await isarService.isar.classObjs.get(id);
-    if (existingClass != null) {
-      existingClass.students.add(studentId);
-      await isarService.isar.writeTxn(
-        () => isarService.isar.classObjs.put(existingClass),
-      );
-      notifyListeners();
-    }
-  }
+  // Future<void> addStudent(int id, int studentId) async {
+  //   final existingClass = await isarService.isar.classObjs.get(id);
+  //   if (existingClass != null) {
+  //     existingClass.students.add(studentId);
+  //     await isarService.isar.writeTxn(
+  //       () => isarService.isar.classObjs.put(existingClass),
+  //     );
+  //     notifyListeners();
+  //   }
+  // }
 
   //RESET CLASS DATABASE
   Future<void> resetClassDatabase() async {
