@@ -3,6 +3,7 @@ import 'package:classplan_new/models/grade_database.dart';
 import 'package:classplan_new/models/student_database.dart';
 import 'package:classplan_new/themes/app_theme.dart';
 import 'package:classplan_new/widgets/createGrade.dart';
+import 'package:classplan_new/widgets/gradeDetails.dart';
 import 'package:classplan_new/widgets/studentDetailsCard.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -43,12 +44,13 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
       builder: (context, studentDatabase, child) {
         return Scaffold(
           appBar: AppBar(
+            leading: BackButton(color: Theme.of(context).colorScheme.onPrimary),
             title: Text(
               studentDatabase.fetchedStudent != null
                   ? 'Informacje o uczniu'
                   //error - student is null appbar indicator
                   : 'Błąd, Nie można załadować informacji',
-              style: onPrimaryColorHeaderTextStyle(context),
+              style: onPrimaryBoldTextStyle(context),
             ),
             backgroundColor: Theme.of(context).colorScheme.primary,
           ),
@@ -76,17 +78,17 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
                                       parent2PhoneNumberController,
                                 ),
                                 const SizedBox(height: 30),
-                                const Text(
+                                Text(
                                   "Informacje dodatkowe",
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                  ),
+                                  style: primaryBoldTextStyle(
+                                    context,
+                                  ).copyWith(fontSize: 22),
                                 ),
-                                SizedBox(height: 50),
+                                const SizedBox(height: 20),
                                 Text(
                                   "Numer Telefonu Matki",
+                                  style: onSurfaceTextStyle(context),
                                   textAlign: TextAlign.left,
                                 ),
                                 Text(
@@ -98,12 +100,15 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
                                           .fetchedStudent!
                                           .parentPhoneNumber
                                       : "Nie podano",
-                                  style: higherContentTextStyle(
+                                  style: secondaryBoldContainerTextStyle(
                                     context,
                                   ).copyWith(fontSize: 13),
                                 ),
                                 const SizedBox(height: 20),
-                                const Text("Numer telefonu ojca"),
+                                Text(
+                                  "Numer telefonu ojca",
+                                  style: onSurfaceTextStyle(context),
+                                ),
                                 Text(
                                   studentDatabase
                                               .fetchedStudent!
@@ -113,26 +118,40 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
                                           .fetchedStudent!
                                           .parentPhoneNumber2
                                       : "Nie podano",
-                                  style: higherContentTextStyle(
+                                  style: secondaryBoldContainerTextStyle(
                                     context,
                                   ).copyWith(fontSize: 13),
                                 ),
                                 const SizedBox(height: 50),
                                 Card(
-                                  surfaceTintColor:
-                                      Theme.of(context).colorScheme.primary,
+                                  shape: RoundedRectangleBorder(
+                                    side: BorderSide(
+                                      color:
+                                          Theme.of(
+                                            context,
+                                          ).colorScheme.tertiaryContainer,
+                                      width: 3,
+                                    ),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  shadowColor:
+                                      Theme.of(context).colorScheme.tertiary,
+                                  elevation: 7,
+                                  color:
+                                      Theme.of(
+                                        context,
+                                      ).colorScheme.primaryContainer,
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceAround,
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
-                                      const Text(
+                                      Text(
                                         "Oceny",
                                         textAlign: TextAlign.left,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15,
-                                        ),
+                                        style: onPrimaryBoldContainerTextStyle(
+                                          context,
+                                        ).copyWith(fontSize: 18),
                                       ),
                                       TextButton.icon(
                                         onPressed:
@@ -141,8 +160,20 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
                                               gradeIdCrtl,
                                               studentDatabase.fetchedStudent!,
                                             ),
-                                        label: Text("Dodaj"),
-                                        icon: Icon(Icons.edit),
+                                        label: Text(
+                                          "Dodaj",
+                                          style:
+                                              onPrimaryBoldContainerTextStyle(
+                                                context,
+                                              ).copyWith(fontSize: 18),
+                                        ),
+                                        icon: Icon(
+                                          Icons.edit,
+                                          color:
+                                              Theme.of(
+                                                context,
+                                              ).colorScheme.onPrimaryContainer,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -156,41 +187,61 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
                                                 .fetchedGradeList
                                                 .length,
                                         itemBuilder: (context, index) {
-                                          return Card(
-                                            surfaceTintColor:
-                                                Theme.of(
-                                                  context,
-                                                ).colorScheme.primary,
-                                            child: Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisSize: MainAxisSize.max,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  studentDatabase
-                                                          .fetchedGradeList[index]
-                                                          .grade +
+                                          return GestureDetector(
+                                            child: Card(
+                                              surfaceTintColor:
+                                                  Theme.of(
+                                                    context,
+                                                  ).colorScheme.primary,
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(
+                                                  8.0,
+                                                ),
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      studentDatabase
+                                                              .fetchedGradeList[index]
+                                                              .grade +
+                                                          studentDatabase
+                                                              .fetchedGradeList[index]
+                                                              .gradeAdd,
+                                                      style:
+                                                          primaryBoldTextStyle(
+                                                            context,
+                                                          ),
+                                                    ),
+                                                    Text(
                                                       studentDatabase
                                                           .fetchedGradeList[index]
-                                                          .gradeAdd,
+                                                          .title,
+                                                      style: secondaryTextStyle(
+                                                        context,
+                                                      ),
+                                                    ),
+                                                    returnGradeTypeOnCard(
+                                                      studentDatabase
+                                                          .fetchedGradeList[index]
+                                                          .type,
+                                                    ),
+                                                  ],
                                                 ),
-                                                Text(
-                                                  studentDatabase
-                                                      .fetchedGradeList[index]
-                                                      .title,
-                                                ),
-                                                Text(
-                                                  fetchedGradeTypeToString(
-                                                    studentDatabase
-                                                        .fetchedGradeList[index]
-                                                        .type,
-                                                  ),
-                                                ),
-                                              ],
+                                              ),
                                             ),
+                                            onTap:
+                                                () => gradeDetailsDialog(
+                                                  context,
+                                                  studentDatabase
+                                                      .fetchedGradeList[index],
+                                                  widget.studentId,
+                                                ),
                                           );
                                         },
                                       ),
@@ -224,5 +275,55 @@ String fetchedGradeTypeToString(GradeType type) {
       return 'P.N.L';
     case GradeType.other:
       return 'Inne';
+  }
+}
+
+Text returnGradeTypeOnCard(GradeType type) {
+  switch (type) {
+    case GradeType.test:
+      return Text(
+        'T',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 25,
+          color: Colors.red,
+        ),
+      );
+    case GradeType.quiz:
+      return Text(
+        'K',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 25,
+          color: Colors.green,
+        ),
+      );
+    case GradeType.activity:
+      return Text(
+        'A',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 25,
+          color: Colors.blue,
+        ),
+      );
+    case GradeType.lesson:
+      return Text(
+        'P.N.L.',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 25,
+          color: Colors.lightBlue,
+        ),
+      );
+    case GradeType.other:
+      return Text(
+        'I',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 25,
+          color: Colors.deepPurple,
+        ),
+      );
   }
 }

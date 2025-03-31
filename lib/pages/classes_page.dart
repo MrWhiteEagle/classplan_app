@@ -20,7 +20,7 @@ class _ClassesPageState extends State<ClassesPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Lista klas"),
-        titleTextStyle: onPrimaryColorHeaderTextStyle(context),
+        titleTextStyle: onPrimaryTextStyle(context),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       floatingActionButton: FloatingActionButton(

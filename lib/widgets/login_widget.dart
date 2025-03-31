@@ -20,7 +20,7 @@ class _LoginWidgetState extends State<LoginWidget> {
         SizedBox(height: 50),
         Text(
           "Logowanie",
-          style: contentTextStyle(context).copyWith(fontSize: 17),
+          style: onSurfaceTextStyle(context).copyWith(fontSize: 17),
         ),
         SizedBox(height: 50),
         SizedBox(

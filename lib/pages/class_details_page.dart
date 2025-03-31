@@ -79,7 +79,7 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                     Text(
                       'Klasa ${widget.className}',
                       textAlign: TextAlign.center,
-                      style: onPrimaryColorHeaderTextStyle(context),
+                      style: onPrimaryTextStyle(context),
                     ),
                     SizedBox(height: 50),
                     Row(

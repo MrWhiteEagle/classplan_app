@@ -23,7 +23,7 @@ class SettingsPage extends StatelessWidget {
                 children: [
                   Text(
                     "Resetuj Klasy i uczniów: ",
-                    style: contentTextStyle(context),
+                    style: onSurfaceTextStyle(context),
                   ),
                   ElevatedButton(
                     onPressed: () {

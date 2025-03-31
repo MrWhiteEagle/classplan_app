@@ -41,10 +41,8 @@ class GradeDatabase extends ChangeNotifier {
             .filter()
             .studentIdEqualTo(studentId)
             .findAll();
-    if (studentGrades.isNotEmpty) {
-      fetchedGradeList.clear();
-      fetchedGradeList.addAll(studentGrades);
-    }
+    fetchedGradeList.clear();
+    fetchedGradeList.addAll(studentGrades);
     debugPrint(
       studentGrades.isNotEmpty
           ? "fetched grades: $studentGrades"
@@ -56,6 +54,7 @@ class GradeDatabase extends ChangeNotifier {
   //UPDATE GRADE
   Future<void> updateGrade(
     int gradeId,
+    int studentId,
     String newTitle,
     GradeType newType,
     String newGrade,
@@ -77,16 +76,16 @@ class GradeDatabase extends ChangeNotifier {
       debugPrint('Grade search returned NULL, cannot update.');
     }
     debugPrint('Grade update process finished.');
-    notifyListeners();
+    readStudentGrades(studentId);
   }
 
   //DELETE GRADE
-  Future<void> deleteGrade(int gradeId) async {
+  Future<void> deleteGrade(int gradeId, int studentId) async {
     debugPrint('Deleting grade $gradeId');
     await isarService.isar.writeTxn(
       () => isarService.isar.grades.delete(gradeId),
     );
-    notifyListeners();
+    readStudentGrades(studentId);
   }
 
   //DELETE ALL STUDENT GRADES UPON STUDENT DELETE

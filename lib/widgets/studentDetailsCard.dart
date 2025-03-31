@@ -27,7 +27,16 @@ class StudentDetailsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     List<String> pointlist = List.from(student.points);
     return Card(
-      surfaceTintColor: Theme.of(context).colorScheme.primary,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(
+          color: Theme.of(context).colorScheme.tertiaryContainer,
+          width: 4,
+        ),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      elevation: 7,
+      shadowColor: Theme.of(context).colorScheme.tertiaryContainer,
+      color: Theme.of(context).colorScheme.primaryContainer,
       child: Container(
         padding: EdgeInsets.all(30),
         child: Column(
@@ -38,18 +47,37 @@ class StudentDetailsCard extends StatelessWidget {
               children: [
                 Text(
                   '${student.name} ${student.lastName}',
-                  style: higherContentTextStyle(context).copyWith(fontSize: 23),
+                  style: onPrimaryBoldTextStyle(context).copyWith(fontSize: 30),
                 ),
                 SizedBox(width: 10),
                 PopupMenuButton(
+                  shadowColor: Theme.of(context).colorScheme.tertiaryContainer,
+                  elevation: 2,
+                  color: Theme.of(context).colorScheme.tertiaryContainer,
                   icon: Icon(
                     Icons.more_vert,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Theme.of(context).colorScheme.onPrimary,
                   ),
                   itemBuilder:
                       (context) => [
-                        PopupMenuItem(value: 0, child: Text("Dane osobowe")),
-                        PopupMenuItem(value: 1, child: Text("Kontakt")),
+                        PopupMenuItem(
+                          value: 0,
+                          child: Text(
+                            "Dane osobowe",
+                            style: onPrimaryTextStyle(
+                              context,
+                            ).copyWith(fontSize: 20),
+                          ),
+                        ),
+                        PopupMenuItem(
+                          value: 1,
+                          child: Text(
+                            "Kontakt",
+                            style: onPrimaryTextStyle(
+                              context,
+                            ).copyWith(fontSize: 20),
+                          ),
+                        ),
                       ],
                   onSelected: (value) {
                     value == 0
@@ -61,7 +89,10 @@ class StudentDetailsCard extends StatelessWidget {
                                 Icons.person,
                                 color: Theme.of(context).colorScheme.primary,
                               ),
-                              title: Text("Edytuj Dane Osobowe"),
+                              title: Text(
+                                "Edytuj Dane Osobowe",
+                                style: primaryBoldTextStyle(context),
+                              ),
                               content: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
@@ -113,7 +144,9 @@ class StudentDetailsCard extends StatelessWidget {
                                   },
                                   child: Text(
                                     "Zapisz",
-                                    style: higherContentTextStyle(context),
+                                    style: primaryBoldContainerTextStyle(
+                                      context,
+                                    ).copyWith(fontSize: 17),
                                   ),
                                 ),
                               ],
@@ -128,7 +161,10 @@ class StudentDetailsCard extends StatelessWidget {
                                 Icons.phone,
                                 color: Theme.of(context).colorScheme.primary,
                               ),
-                              title: Text("Edytuj Kontakt"),
+                              title: Text(
+                                "Edytuj Kontakt",
+                                style: primaryBoldTextStyle(context),
+                              ),
                               content: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -191,7 +227,9 @@ class StudentDetailsCard extends StatelessWidget {
                                   },
                                   child: Text(
                                     "Zapisz",
-                                    style: higherContentTextStyle(context),
+                                    style: primaryBoldTextStyle(
+                                      context,
+                                    ).copyWith(fontSize: 17),
                                   ),
                                 ),
                               ],
@@ -208,22 +246,36 @@ class StudentDetailsCard extends StatelessWidget {
               children: [
                 Column(
                   children: [
-                    Text("Numer telefonu"),
+                    Text(
+                      "Numer telefonu",
+                      style: onPrimaryBoldContainerTextStyle(
+                        context,
+                      ).copyWith(fontSize: 18),
+                    ),
                     Text(
                       student.phoneNumber != ''
                           ? student.phoneNumber
                           : "Nie podano",
-                      style: higherContentTextStyle(
+                      style: onPrimaryContainerTextStyle(
                         context,
                       ).copyWith(fontSize: 15),
                     ),
                   ],
                 ),
                 Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     TextButton.icon(
-                      label: Text("Aktywność"),
-                      icon: Icon(Icons.add_circle_outline),
+                      label: Text(
+                        "Aktywność",
+                        style: onPrimaryBoldContainerTextStyle(
+                          context,
+                        ).copyWith(fontSize: 18),
+                      ),
+                      icon: Icon(
+                        Icons.add_circle_outline,
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
                       onPressed:
                           () => showActivityEditDialog(context, pointlist),
                     ),
@@ -231,7 +283,7 @@ class StudentDetailsCard extends StatelessWidget {
                       student.points.isNotEmpty
                           ? student.points.join(" ")
                           : "Brak Aktywności",
-                      style: higherContentTextStyle(
+                      style: onPrimaryContainerTextStyle(
                         context,
                       ).copyWith(fontSize: 15),
                     ),
@@ -259,7 +311,10 @@ class StudentDetailsCard extends StatelessWidget {
                 Icons.add_circle_outlined,
                 color: Theme.of(context).colorScheme.primary,
               ),
-              title: Text("Zmień aktywność"),
+              title: Text(
+                "Zmień aktywność",
+                style: primaryBoldTextStyle(context),
+              ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -310,16 +365,25 @@ class StudentDetailsCard extends StatelessWidget {
                           },
                           icon: Icon(
                             Icons.add_circle_outline,
-                            color: Theme.of(context).colorScheme.primary,
+                            color:
+                                Theme.of(context).colorScheme.tertiaryContainer,
                           ),
                         ),
                         TextButton.icon(
-                          label: Text("Wyczyść"),
+                          label: Text(
+                            "Wyczyść",
+                            style: secondaryBoldTextStyle(
+                              context,
+                            ).copyWith(fontSize: 16),
+                          ),
                           onPressed: () {
                             pointlist.clear();
                             setState(() {});
                           },
-                          icon: Icon(Icons.clear),
+                          icon: Icon(
+                            Icons.clear,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
                         ),
                         IconButton(
                           onPressed: () {
@@ -328,7 +392,8 @@ class StudentDetailsCard extends StatelessWidget {
                           },
                           icon: Icon(
                             Icons.remove_circle_outline,
-                            color: Theme.of(context).colorScheme.primary,
+                            color:
+                                Theme.of(context).colorScheme.tertiaryContainer,
                           ),
                         ),
                       ],
@@ -363,9 +428,7 @@ class StudentDetailsCard extends StatelessWidget {
                   },
                   child: Text(
                     "Zapisz",
-                    style: higherContentTextStyle(
-                      context,
-                    ).copyWith(fontSize: 14),
+                    style: primaryBoldTextStyle(context).copyWith(fontSize: 17),
                   ),
                 ),
               ],
