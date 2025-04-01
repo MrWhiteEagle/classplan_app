@@ -25,6 +25,8 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
   final parent2PhoneNumberController = TextEditingController();
   final gradeIdCrtl = TextEditingController();
 
+  GlobalKey sortButtonKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
@@ -62,6 +64,85 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
                     ),
                 icon: Icon(
                   Icons.delete,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+              ),
+              TextButton.icon(
+                key: sortButtonKey,
+                onPressed: () {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (sortButtonKey.currentContext != null) {
+                      final RenderBox buttonRender =
+                          sortButtonKey.currentContext!.findRenderObject()
+                              as RenderBox;
+                      final Offset offset = buttonRender.localToGlobal(
+                        Offset.zero,
+                      );
+
+                      showMenu(
+                        context: context,
+                        position: RelativeRect.fromLTRB(
+                          offset.dx,
+                          offset.dy + buttonRender.size.height,
+                          offset.dx + buttonRender.size.width,
+                          offset.dy + buttonRender.size.height * 2,
+                        ),
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        items: [
+                          PopupMenuItem(
+                            child: Text(
+                              'Domyślne',
+                              style: primaryTextStyle(
+                                context,
+                              ).copyWith(fontSize: 15),
+                            ),
+                            onTap:
+                                () => Provider.of<GradeDatabase>(
+                                  context,
+                                  listen: false,
+                                ).readStudentGrades(widget.studentId),
+                          ),
+                          PopupMenuItem(
+                            child: Text(
+                              'Po Nazwie',
+                              style: primaryTextStyle(
+                                context,
+                              ).copyWith(fontSize: 15),
+                            ),
+                            onTap:
+                                () =>
+                                    Provider.of<GradeDatabase>(
+                                      context,
+                                      listen: false,
+                                    ).sortGradesByTitle(),
+                          ),
+                          PopupMenuItem(
+                            child: Text(
+                              'Po Typie',
+                              style: primaryTextStyle(
+                                context,
+                              ).copyWith(fontSize: 15),
+                            ),
+                            onTap:
+                                () =>
+                                    Provider.of<GradeDatabase>(
+                                      context,
+                                      listen: false,
+                                    ).sortGradesByType(),
+                          ),
+                        ],
+                      );
+                    } else {
+                      debugPrint('Button not laid out');
+                    }
+                  });
+                },
+                label: Text(
+                  'Sortuj',
+                  style: onPrimaryTextStyle(context).copyWith(fontSize: 15),
+                ),
+                icon: Icon(
+                  Icons.sort,
                   color: Theme.of(context).colorScheme.onPrimary,
                 ),
               ),

@@ -25,10 +25,15 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
   @override
   void initState() {
     super.initState();
+    Provider.of<StudentDatabase>(
+      context,
+      listen: false,
+    ).readStudents(widget.classId);
   }
 
   final nameController = TextEditingController();
   final lastNameController = TextEditingController();
+  GlobalKey sortButtonKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -67,11 +72,88 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
             },
             icon: Icon(Icons.delete),
           ),
+          TextButton.icon(
+            key: sortButtonKey,
+            onPressed: () {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (sortButtonKey.currentContext != null) {
+                  final RenderBox buttonRender =
+                      sortButtonKey.currentContext!.findRenderObject()
+                          as RenderBox;
+                  final Offset offset = buttonRender.localToGlobal(Offset.zero);
+
+                  showMenu(
+                    context: context,
+                    position: RelativeRect.fromLTRB(
+                      offset.dx,
+                      offset.dy + buttonRender.size.height,
+                      offset.dx + buttonRender.size.width,
+                      offset.dy + buttonRender.size.height * 2,
+                    ),
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    items: [
+                      PopupMenuItem(
+                        child: Text(
+                          'Domyślne',
+                          style: primaryTextStyle(
+                            context,
+                          ).copyWith(fontSize: 15),
+                        ),
+                        onTap:
+                            () => Provider.of<StudentDatabase>(
+                              context,
+                              listen: false,
+                            ).readStudents(widget.classId),
+                      ),
+                      PopupMenuItem(
+                        child: Text(
+                          'Po imieniu',
+                          style: primaryTextStyle(
+                            context,
+                          ).copyWith(fontSize: 15),
+                        ),
+                        onTap:
+                            () =>
+                                Provider.of<StudentDatabase>(
+                                  context,
+                                  listen: false,
+                                ).sortStudentsAlpha(),
+                      ),
+                      PopupMenuItem(
+                        child: Text(
+                          'Po nazwisku',
+                          style: primaryTextStyle(
+                            context,
+                          ).copyWith(fontSize: 15),
+                        ),
+                        onTap:
+                            () =>
+                                Provider.of<StudentDatabase>(
+                                  context,
+                                  listen: false,
+                                ).sortStudentsLastNameAlpha(),
+                      ),
+                    ],
+                  );
+                } else {
+                  debugPrint('Button not laid out');
+                }
+              });
+            },
+            label: Text(
+              'Sortuj',
+              style: onPrimaryTextStyle(context).copyWith(fontSize: 15),
+            ),
+            icon: Icon(
+              Icons.sort,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
         ],
       ),
       body: Consumer<StudentDatabase>(
         builder: (context, studentDatabase, child) {
-          studentDatabase.readStudents(widget.classId);
+          debugPrint('Student List loaded!');
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [

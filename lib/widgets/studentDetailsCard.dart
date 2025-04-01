@@ -1,3 +1,5 @@
+import 'package:classplan_new/models/grade.dart';
+import 'package:classplan_new/models/grade_database.dart';
 import 'package:classplan_new/models/student.dart';
 import 'package:classplan_new/models/student_database.dart';
 import 'package:classplan_new/themes/app_theme.dart';
@@ -55,7 +57,7 @@ class StudentDetailsCard extends StatelessWidget {
                   elevation: 2,
                   color: Theme.of(context).colorScheme.tertiaryContainer,
                   icon: Icon(
-                    Icons.more_vert,
+                    Icons.menu,
                     color: Theme.of(context).colorScheme.onPrimary,
                   ),
                   itemBuilder:
@@ -360,11 +362,11 @@ class StudentDetailsCard extends StatelessWidget {
                       children: [
                         IconButton(
                           onPressed: () {
-                            pointlist.add('+');
+                            pointlist.add('-');
                             setState(() {});
                           },
                           icon: Icon(
-                            Icons.add_circle_outline,
+                            Icons.remove_circle_outline,
                             color:
                                 Theme.of(context).colorScheme.tertiaryContainer,
                           ),
@@ -387,11 +389,11 @@ class StudentDetailsCard extends StatelessWidget {
                         ),
                         IconButton(
                           onPressed: () {
-                            pointlist.add('-');
+                            pointlist.add('+');
                             setState(() {});
                           },
                           icon: Icon(
-                            Icons.remove_circle_outline,
+                            Icons.add_circle_outline,
                             color:
                                 Theme.of(context).colorScheme.tertiaryContainer,
                           ),
@@ -412,6 +414,11 @@ class StudentDetailsCard extends StatelessWidget {
                 MaterialButton(
                   onPressed: () {
                     Navigator.pop(context);
+                    pointlist = activityGradeCheck(
+                      context,
+                      pointlist,
+                      student.studentId,
+                    );
                     Provider.of<StudentDatabase>(
                       context,
                       listen: false,
@@ -436,4 +443,38 @@ class StudentDetailsCard extends StatelessWidget {
           },
         ),
   );
+}
+
+List<String> activityGradeCheck(context, List<String> pointlist, studentId) {
+  //count of positive marks in list
+  int positiveCount = 0;
+  //list of positive indexes
+  List<int> posIndex = [];
+  //count and save positive indexes in list
+  for (int i = 0; i < pointlist.length; i++) {
+    if (pointlist[i] == '+') {
+      positiveCount++;
+      posIndex.add(i);
+    }
+  }
+  //if positive count exceeds or is 5, count the grades to be added
+  if (positiveCount >= 5) {
+    int gradesToAdd = positiveCount ~/ 5;
+    int toDelete = gradesToAdd * 5;
+    //reverse the list to delete backwards, so the indexes dont switch mid-deletion
+    posIndex.sort((a, b) => b.compareTo(a));
+    for (int i = 0; i < toDelete; i++) {
+      pointlist.removeAt(posIndex[i]);
+    }
+    debugPrint('Grades to add: $gradesToAdd, new pointlist: $pointlist');
+    for (int i = 0; i < gradesToAdd; i++) {
+      Provider.of<GradeDatabase>(
+        context,
+        listen: false,
+      ).createGrade(studentId, 'Plusy', GradeType.activity, '5', '');
+    }
+  } else {
+    debugPrint('No grades to add');
+  }
+  return pointlist;
 }

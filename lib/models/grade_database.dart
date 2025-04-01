@@ -12,7 +12,7 @@ class GradeDatabase extends ChangeNotifier {
   Future<void> createGrade(
     int studentId,
     String title,
-    String type,
+    GradeType type,
     String grade,
     String gradeAdd,
   ) async {
@@ -22,7 +22,7 @@ class GradeDatabase extends ChangeNotifier {
         Grade()
           ..studentId = studentId
           ..title = title
-          ..type = fromStringGradeType(type)
+          ..type = type
           ..grade = grade
           ..gradeAdd = gradeAdd;
 
@@ -47,6 +47,27 @@ class GradeDatabase extends ChangeNotifier {
       studentGrades.isNotEmpty
           ? "fetched grades: $studentGrades"
           : "fetched studentGrades are empty!",
+    );
+    notifyListeners();
+  }
+
+  //SORT STUDENT GRADES BY TITLE
+  void sortGradesByTitle() {
+    fetchedGradeList.sort((a, b) => a.title.compareTo(b.title));
+    notifyListeners();
+  }
+
+  //SORT STUDENT GRADES BY TYPE
+  void sortGradesByType() {
+    Map<GradeType, int> sortOrder = {
+      GradeType.test: 0,
+      GradeType.quiz: 1,
+      GradeType.activity: 2,
+      GradeType.lesson: 3,
+      GradeType.other: 4,
+    };
+    fetchedGradeList.sort(
+      (a, b) => sortOrder[a.type]!.compareTo(sortOrder[b.type]!),
     );
     notifyListeners();
   }

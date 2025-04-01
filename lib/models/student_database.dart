@@ -17,8 +17,8 @@ class StudentDatabase extends ChangeNotifier {
   ) async {
     final newStudent =
         Student()
-          ..name = studentName
-          ..lastName = lastName
+          ..name = checkSpelling(studentName)
+          ..lastName = checkSpelling(lastName)
           ..classIds.add(classId);
     await isarService.isar.writeTxn(
       () => isarService.isar.students.put(newStudent),
@@ -46,6 +46,17 @@ class StudentDatabase extends ChangeNotifier {
       studentList.addAll(fetchedStudents);
       notifyListeners();
     }
+  }
+
+  //SORT STUDENT LIST ALPHABETICALLY
+  void sortStudentsAlpha() {
+    studentList.sort((a, b) => a.name.compareTo(b.name));
+    notifyListeners();
+  }
+
+  void sortStudentsLastNameAlpha() {
+    studentList.sort((a, b) => a.lastName.compareTo(b.lastName));
+    notifyListeners();
   }
 
   //FETCH STUDENT DETAILS BY ID
@@ -92,9 +103,9 @@ class StudentDatabase extends ChangeNotifier {
   ) async {
     final existingStudent = await isarService.isar.students.get(studentId);
     if (existingStudent != null) {
-      existingStudent.name = newName;
+      existingStudent.name = checkSpelling(newName);
       existingStudent.classIds = newClassIds;
-      existingStudent.lastName = newLastName;
+      existingStudent.lastName = checkSpelling(newLastName);
       existingStudent.phoneNumber = newPhoneNumber;
       existingStudent.parentPhoneNumber = newParentPhoneNumber;
       existingStudent.parentPhoneNumber2 = newParentPhoneNumber2;
@@ -122,4 +133,22 @@ class StudentDatabase extends ChangeNotifier {
     await isarService.isar.writeTxn(() => isarService.isar.students.clear());
     notifyListeners();
   }
+}
+
+String checkSpelling(String text) {
+  if (text.isEmpty) {
+    return text;
+  }
+  //delete all non-letters
+  text = text.replaceAll(RegExp(r'[^a-zA-Z]'), '');
+  //if the first letter is uppercase, return it
+  if (text[0].toUpperCase() == text[0]) {
+    return text;
+  }
+  //if its not, make it uppercase
+  else {
+    text = text[0].toUpperCase() + text.substring(1);
+  }
+  //return
+  return text;
 }

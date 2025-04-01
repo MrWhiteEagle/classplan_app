@@ -35,8 +35,21 @@ class ClassDatabase extends ChangeNotifier {
     notifyListeners();
   }
 
-  //UPDATE
+  //SORT CLASS LIST ALPHABETICALLY
+  void sortClassesAlpha() {
+    classList.sort((a, b) => a.name.compareTo(b.name));
+    notifyListeners();
+  }
 
+  void sortClassesRevAlpha() {
+    sortClassesAlpha();
+    List<ClassObj> sorted = classList.reversed.toList();
+    classList.clear();
+    classList.addAll(sorted);
+    notifyListeners();
+  }
+
+  //UPDATE
   Future<void> updateClass(
     int id,
     String newName,
@@ -63,19 +76,6 @@ class ClassDatabase extends ChangeNotifier {
     );
     await readClasses();
   }
-
-  //ADD STUDENT TO CLASS
-  //NOT USED, ADDS STUDENT TO CLASS'S STUDENTLIST BUT A SEARCH OF STUDENTS FROM CLASS IS PERFORMED USING THEIR BOUND CLASSES IN CLASS LIST
-  // Future<void> addStudent(int id, int studentId) async {
-  //   final existingClass = await isarService.isar.classObjs.get(id);
-  //   if (existingClass != null) {
-  //     existingClass.students.add(studentId);
-  //     await isarService.isar.writeTxn(
-  //       () => isarService.isar.classObjs.put(existingClass),
-  //     );
-  //     notifyListeners();
-  //   }
-  // }
 
   //RESET CLASS DATABASE
   Future<void> resetClassDatabase() async {
