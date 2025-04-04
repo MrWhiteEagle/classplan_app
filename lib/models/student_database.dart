@@ -91,31 +91,14 @@ class StudentDatabase extends ChangeNotifier {
   }
 
   //UPDATE STUDENT
-  Future<void> updateStudent(
-    Id studentId,
-    List<int> newClassIds,
-    String newName,
-    String newLastName,
-    String newPhoneNumber,
-    String newParentPhoneNumber,
-    String newParentPhoneNumber2,
-    List<String> newpointList,
-  ) async {
-    final existingStudent = await isarService.isar.students.get(studentId);
-    if (existingStudent != null) {
-      existingStudent.name = checkSpelling(newName);
-      existingStudent.classIds = newClassIds;
-      existingStudent.lastName = checkSpelling(newLastName);
-      existingStudent.phoneNumber = newPhoneNumber;
-      existingStudent.parentPhoneNumber = newParentPhoneNumber;
-      existingStudent.parentPhoneNumber2 = newParentPhoneNumber2;
-      existingStudent.points = newpointList;
-      await isarService.isar.writeTxn(
-        () => isarService.isar.students.put(existingStudent),
-      );
-      notifyListeners();
-      fetchStudentDetails(studentId);
-    }
+  Future<void> updateStudent(Student newStudent) async {
+    newStudent.name = checkSpelling(newStudent.name);
+    newStudent.lastName = checkSpelling(newStudent.lastName);
+    await isarService.isar.writeTxn(
+      () => isarService.isar.students.put(newStudent),
+    );
+    notifyListeners();
+    fetchStudentDetails(newStudent.studentId);
   }
 
   //DELETE STUDENT

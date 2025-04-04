@@ -9,22 +9,10 @@ class GradeDatabase extends ChangeNotifier {
   Grade? fetchedGrade;
 
   //CREATE GRADE
-  Future<void> createGrade(
-    int studentId,
-    String title,
-    GradeType type,
-    String grade,
-    String gradeAdd,
-  ) async {
-    debugPrint('Creating grade $title for student $studentId...');
-
-    final newGrade =
-        Grade()
-          ..studentId = studentId
-          ..title = title
-          ..type = type
-          ..grade = grade
-          ..gradeAdd = gradeAdd;
+  Future<void> createGrade(int studentId, Grade newGrade) async {
+    debugPrint(
+      'Creating grade ${newGrade.title} for student ${newGrade.studentId}...',
+    );
 
     await isarService.isar.writeTxn(
       () => isarService.isar.grades.put(newGrade),
@@ -73,29 +61,10 @@ class GradeDatabase extends ChangeNotifier {
   }
 
   //UPDATE GRADE
-  Future<void> updateGrade(
-    int gradeId,
-    int studentId,
-    String newTitle,
-    GradeType newType,
-    String newGrade,
-    String newGradeAdd,
-  ) async {
-    final currentGrade = await isarService.isar.grades.get(gradeId);
-    if (currentGrade != null) {
-      debugPrint(
-        'Grade found for updating! Update with $newTitle, $newType, $newGrade $newGradeAdd',
-      );
-      currentGrade.title = newTitle;
-      currentGrade.type = newType;
-      currentGrade.grade = newGrade;
-      currentGrade.gradeAdd = newGradeAdd;
-      await isarService.isar.writeTxn(
-        () => isarService.isar.grades.put(currentGrade),
-      );
-    } else {
-      debugPrint('Grade search returned NULL, cannot update.');
-    }
+  Future<void> updateGrade(int studentId, Grade newGrade) async {
+    await isarService.isar.writeTxn(
+      () => isarService.isar.grades.put(newGrade),
+    );
     debugPrint('Grade update process finished.');
     readStudentGrades(studentId);
   }
@@ -125,21 +94,11 @@ class GradeDatabase extends ChangeNotifier {
     }
     debugPrint('Deletion process finished.');
   }
-}
 
-//Turn a string to enum for grade type
-GradeType fromStringGradeType(String input) {
-  switch (input) {
-    case 'T':
-      return GradeType.test;
-    case 'K':
-      return GradeType.quiz;
-    case 'A':
-      return GradeType.activity;
-    case 'P':
-      return GradeType.lesson;
-    case 'I':
-      return GradeType.other;
+  Future<void> resetGradeDatabase() async {
+    fetchedGrade = null;
+    fetchedGradeList.clear();
+    await isarService.isar.writeTxn(() => isarService.isar.grades.clear());
+    notifyListeners();
   }
-  return GradeType.other;
 }

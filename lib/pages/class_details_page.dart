@@ -6,16 +6,9 @@ import 'package:classplan_new/models/student_database.dart';
 import 'package:classplan_new/models/class_database.dart';
 
 class ClassDetailsPage extends StatefulWidget {
-  final String className;
   final int classId;
-  final String careTeacher;
 
-  const ClassDetailsPage({
-    super.key,
-    required this.className,
-    required this.classId,
-    required this.careTeacher,
-  });
+  const ClassDetailsPage({super.key, required this.classId});
 
   @override
   State<ClassDetailsPage> createState() => _ClassDetailsPageState();
@@ -25,14 +18,16 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
   @override
   void initState() {
     super.initState();
+    Provider.of<ClassDatabase>(
+      context,
+      listen: false,
+    ).fetchClassDetails(widget.classId);
     Provider.of<StudentDatabase>(
       context,
       listen: false,
     ).readStudents(widget.classId);
   }
 
-  final nameController = TextEditingController();
-  final lastNameController = TextEditingController();
   GlobalKey sortButtonKey = GlobalKey();
 
   @override
@@ -40,13 +35,7 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add, size: 30),
-        onPressed:
-            () => addStudentDialog(
-              context,
-              nameController,
-              lastNameController,
-              widget.classId,
-            ),
+        onPressed: () => addStudentDialog(context, widget.classId),
       ),
       appBar: AppBar(
         leading: BackButton(color: Theme.of(context).colorScheme.onPrimary),
@@ -151,9 +140,12 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
           ),
         ],
       ),
-      body: Consumer<StudentDatabase>(
-        builder: (context, studentDatabase, child) {
-          debugPrint('Student List loaded!');
+      body: Consumer<ClassDatabase>(
+        builder: (context, classDatabase, child) {
+          //fetching class is asynchronous and the body builds immediately, so the normal page waits, until the fetched class is not null
+          if (classDatabase.fetchedClass == null) {
+            return Center(child: CircularProgressIndicator());
+          }
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -164,7 +156,7 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      'Klasa ${widget.className}',
+                      'Klasa ${classDatabase.fetchedClass?.name}',
                       textAlign: TextAlign.center,
                       style: onPrimaryBoldTextStyle(context),
                     ),
@@ -174,17 +166,24 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                       children: [
                         Column(
                           children: [
-                            Text(
-                              "Wychowawca",
-                              textAlign: TextAlign.left,
-                              style: onPrimaryBoldContainerTextStyle(
-                                context,
-                              ).copyWith(fontSize: 18),
+                            TextButton.icon(
+                              label: Text(
+                                "Wychowawca",
+                                style: onPrimaryBoldContainerTextStyle(
+                                  context,
+                                ).copyWith(fontSize: 18),
+                              ),
+                              icon: Icon(
+                                Icons.edit,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              iconAlignment: IconAlignment.end,
+                              onPressed: () => editCareTeacherDialog(context),
                             ),
                             Text(
-                              widget.careTeacher == ''
+                              classDatabase.fetchedClass!.careTeacher == ''
                                   ? "Nie podano"
-                                  : widget.careTeacher,
+                                  : classDatabase.fetchedClass!.careTeacher,
                               textAlign: TextAlign.left,
                               style: onPrimaryBoldContainerTextStyle(
                                 context,
@@ -200,11 +199,16 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                                 context,
                               ).copyWith(fontSize: 18),
                             ),
-                            Text(
-                              studentDatabase.studentList.length.toString(),
-                              style: secondaryBoldContainerTextStyle(
-                                context,
-                              ).copyWith(fontSize: 15),
+                            //one time consumer for accessing the fetched student list for class
+                            Consumer<StudentDatabase>(
+                              builder: (context, studentDatabase, child) {
+                                return Text(
+                                  studentDatabase.studentList.length.toString(),
+                                  style: secondaryBoldContainerTextStyle(
+                                    context,
+                                  ).copyWith(fontSize: 15),
+                                );
+                              },
                             ),
                           ],
                         ),
@@ -225,60 +229,76 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                 ),
               ),
               Flexible(
-                child: ListView.builder(
-                  itemCount: studentDatabase.studentList.length,
-                  itemBuilder: (context, index) {
-                    final student = studentDatabase.studentList[index];
-                    return Card(
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: Theme.of(context).colorScheme.primary,
-                          width: 3,
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
-                      elevation: 5,
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: ListTile(
-                          title: Text(
-                            '${student.name} ${student.lastName}',
-                            style: higherContentTextStyle(context),
+                //consumer for student list for class (everything here uses data from the db)
+                child: Consumer<StudentDatabase>(
+                  builder: (context, studentDatabase, child) {
+                    debugPrint('Student List loaded!');
+                    return ListView.builder(
+                      itemCount: studentDatabase.studentList.length,
+                      itemBuilder: (context, index) {
+                        final student = studentDatabase.studentList[index];
+                        return Card(
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              color: Theme.of(context).colorScheme.primary,
+                              width: 3,
+                            ),
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                'Aktywność: ',
-                                style: primaryBoldTextStyle(
-                                  context,
-                                ).copyWith(fontSize: 15),
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                          elevation: 5,
+                          child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: ListTile(
+                              title: Text(
+                                '${studentDatabase.studentList[index].name} ${studentDatabase.studentList[index].lastName}',
+                                style: higherContentTextStyle(context),
                               ),
-                              Text(
-                                student.points.isNotEmpty
-                                    ? student.points.join(" ")
-                                    : 'Brak Aktywności',
-                                style: primaryBoldTextStyle(context).copyWith(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    'Aktywność: ',
+                                    style: primaryBoldTextStyle(
+                                      context,
+                                    ).copyWith(fontSize: 15),
+                                  ),
+                                  Text(
+                                    student.points.isNotEmpty
+                                        ? studentDatabase
+                                            .studentList[index]
+                                            .points
+                                            .join(" ")
+                                        : 'Brak Aktywności',
+                                    style: primaryBoldTextStyle(
+                                      context,
+                                    ).copyWith(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                              onTap:
+                                  () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) {
+                                        return StudentDetailsPage(
+                                          studentId: student.studentId,
+                                        );
+                                      },
+                                    ),
+                                  ).then(
+                                    (_) => studentDatabase.readStudents(
+                                      widget.classId,
+                                    ),
+                                  ),
+                            ),
                           ),
-                          onTap:
-                              () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) {
-                                    return StudentDetailsPage(
-                                      studentId: student.studentId,
-                                    );
-                                  },
-                                ),
-                              ),
-                        ),
-                      ),
+                        );
+                      },
                     );
                   },
                 ),
@@ -292,12 +312,9 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
 }
 
 //dialog for adding a new student
-void addStudentDialog(
-  BuildContext context,
-  TextEditingController nameController,
-  TextEditingController lastNameController,
-  int classId,
-) {
+void addStudentDialog(BuildContext context, int classId) {
+  final nameController = TextEditingController();
+  final lastNameController = TextEditingController();
   showDialog(
     context: context,
     builder:
@@ -332,7 +349,10 @@ void addStudentDialog(
                 nameController.clear();
                 lastNameController.clear();
               },
-              child: const Text("Anuluj"),
+              child: Text(
+                "Anuluj",
+                style: onSurfaceTextStyle(context).copyWith(fontSize: 18),
+              ),
             ),
             MaterialButton(
               onPressed: () {
@@ -345,7 +365,73 @@ void addStudentDialog(
                 nameController.clear();
                 lastNameController.clear();
               },
-              child: Text("Dodaj", style: higherContentTextStyle(context)),
+              child: Text(
+                "Dodaj",
+                style: primaryBoldTextStyle(context).copyWith(fontSize: 18),
+              ),
+            ),
+          ],
+        ),
+  );
+}
+
+editCareTeacherDialog(BuildContext context) {
+  final careTeacherNameCtrl = TextEditingController();
+  showDialog(
+    context: context,
+    builder:
+        (context) => AlertDialog(
+          title: Text(
+            'Zmień wychowawcę',
+            style: primaryBoldTextStyle(context).copyWith(fontSize: 20),
+          ),
+          icon: Icon(
+            Icons.manage_accounts,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+          content: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: careTeacherNameCtrl,
+                decoration: InputDecoration(
+                  hintText: 'Imie i nazwisko wychowawcy',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            MaterialButton(
+              onPressed: () {
+                Navigator.pop(context);
+                careTeacherNameCtrl.clear();
+              },
+              child: Text(
+                "Anuluj",
+                style: onSurfaceTextStyle(context).copyWith(fontSize: 18),
+              ),
+            ),
+            MaterialButton(
+              onPressed: () {
+                final newClass =
+                    Provider.of<ClassDatabase>(
+                      context,
+                      listen: false,
+                    ).fetchedClass;
+                newClass!.careTeacher = careTeacherNameCtrl.text;
+                Provider.of<ClassDatabase>(
+                  context,
+                  listen: false,
+                ).updateClass(newClass);
+                careTeacherNameCtrl.clear();
+                Navigator.pop(context);
+              },
+              child: Text(
+                "Zapisz",
+                style: primaryBoldTextStyle(context).copyWith(fontSize: 18),
+              ),
             ),
           ],
         ),

@@ -149,13 +149,10 @@ class _ClassesPageState extends State<ClassesPage> {
                         context,
                         MaterialPageRoute(
                           builder:
-                              (context) => ClassDetailsPage(
-                                className: classObj.name,
-                                classId: classObj.id,
-                                careTeacher: classObj.careTeacher,
-                              ),
+                              (context) =>
+                                  ClassDetailsPage(classId: classObj.id),
                         ),
-                      ),
+                      ).then((_) => classDatabase.readClasses()),
                 ),
               );
             },
@@ -207,7 +204,7 @@ void createClass(BuildContext context, TextEditingController textController) {
                 Provider.of<ClassDatabase>(
                   context,
                   listen: false,
-                ).addClass(textController.text, '');
+                ).addClass(textController.text);
                 Navigator.pop(context);
                 textController.clear();
               },

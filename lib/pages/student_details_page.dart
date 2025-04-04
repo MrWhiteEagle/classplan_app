@@ -18,22 +18,20 @@ class StudentDetailsPage extends StatefulWidget {
 }
 
 class _StudentDetailsPageState extends State<StudentDetailsPage> {
-  final nameController = TextEditingController();
-  final lastNameController = TextEditingController();
-  final phoneNumberController = TextEditingController();
-  final parentPhoneNumberController = TextEditingController();
-  final parent2PhoneNumberController = TextEditingController();
-  final gradeIdCrtl = TextEditingController();
-
+  //global key for finding the sort button for custom menu
   GlobalKey sortButtonKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
+
+    //initial fetch student details for the page
     Provider.of<StudentDatabase>(
       context,
       listen: false,
     ).fetchStudentDetails(widget.studentId);
+
+    //initial fetch of student grades for the page
     Provider.of<GradeDatabase>(
       context,
       listen: false,
@@ -42,6 +40,7 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    //everything on this page uses the student database
     return Consumer<StudentDatabase>(
       builder: (context, studentDatabase, child) {
         return Scaffold(
@@ -150,6 +149,7 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
             backgroundColor: Theme.of(context).colorScheme.primary,
           ),
           body:
+              //check for null student
               studentDatabase.fetchedStudent != null
                   ? Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -163,14 +163,8 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 StudentDetailsCard(
+                                  //pass along the student object
                                   student: studentDatabase.fetchedStudent!,
-                                  nameController: nameController,
-                                  lastNameController: lastNameController,
-                                  phoneNumberController: phoneNumberController,
-                                  parentPhoneNumberController:
-                                      parentPhoneNumberController,
-                                  parent2PhoneNumberController:
-                                      parent2PhoneNumberController,
                                 ),
                                 const SizedBox(height: 30),
                                 Text(
@@ -250,9 +244,8 @@ class _StudentDetailsPageState extends State<StudentDetailsPage> {
                                       ),
                                       TextButton.icon(
                                         onPressed:
-                                            () => createGrade(
+                                            () => createGradeAlert(
                                               context,
-                                              gradeIdCrtl,
                                               studentDatabase.fetchedStudent!,
                                             ),
                                         label: Text(

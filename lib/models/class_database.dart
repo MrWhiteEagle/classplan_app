@@ -9,13 +9,12 @@ class ClassDatabase extends ChangeNotifier {
   //List of classes
   final List<ClassObj> classList = [];
 
+  ClassObj? fetchedClass;
+
   //CREATE
-  Future<void> addClass(String className, String careTeacher) async {
+  Future<void> addClass(String className) async {
     //create a new class
-    final newClass =
-        ClassObj()
-          ..name = className
-          ..careTeacher = careTeacher;
+    final newClass = ClassObj()..name = className;
 
     //save to db
     await isarService.isar.writeTxn(
@@ -49,24 +48,25 @@ class ClassDatabase extends ChangeNotifier {
     notifyListeners();
   }
 
-  //UPDATE
-  Future<void> updateClass(
-    int id,
-    String newName,
-    String newCareTeacher,
-  ) async {
-    //get content of existing class
-    final existingClass = await isarService.isar.classObjs.get(id);
-
-    //if a class is not null, change its content to the new one, and save it in the db.
-    if (existingClass != null) {
-      existingClass.name = newName;
-      existingClass.careTeacher = newCareTeacher;
-      await isarService.isar.writeTxn(
-        () => isarService.isar.classObjs.put(existingClass),
-      );
-      notifyListeners();
+  Future<void> fetchClassDetails(Id classId) async {
+    final classDetails = await isarService.isar.classObjs.get(classId);
+    debugPrint('fetched class $classDetails');
+    if (classDetails != null) {
+      debugPrint('fetched class name: ${classDetails.name}');
+      fetchedClass = classDetails;
+    } else {
+      debugPrint('class fetch failed!!!!!!!!!');
     }
+    notifyListeners();
+  }
+
+  //UPDATE
+  Future<void> updateClass(ClassObj newClass) async {
+    //?Implement spellchecking careteacher
+    await isarService.isar.writeTxn(
+      () => isarService.isar.classObjs.put(newClass),
+    );
+    notifyListeners();
   }
 
   //DELETE
@@ -79,6 +79,7 @@ class ClassDatabase extends ChangeNotifier {
 
   //RESET CLASS DATABASE
   Future<void> resetClassDatabase() async {
+    fetchedClass = null;
     classList.clear();
     await isarService.isar.writeTxn(() => isarService.isar.classObjs.clear());
     notifyListeners();

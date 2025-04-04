@@ -82,7 +82,9 @@ Future gradeDetailsDialog(context, Grade grade, studentId) {
 }
 
 Future editGradeAlert(context, Grade grade, int studentId) {
-  TextEditingController gradeIdCtrl = TextEditingController(text: grade.title);
+  TextEditingController gradeNameCtrl = TextEditingController(
+    text: grade.title,
+  );
   Set<String> gradeTypeSelection = {gradeTypeToString(grade.type)};
   return showDialog(
     context: context,
@@ -131,7 +133,7 @@ Future editGradeAlert(context, Grade grade, int studentId) {
                     style: primaryBoldTextStyle(context).copyWith(fontSize: 14),
                   ),
                   TextField(
-                    controller: gradeIdCtrl,
+                    controller: gradeNameCtrl,
                     style: primaryBoldTextStyle(context).copyWith(fontSize: 16),
                     decoration: InputDecoration(
                       enabledBorder: UnderlineInputBorder(
@@ -313,21 +315,20 @@ Future editGradeAlert(context, Grade grade, int studentId) {
                     'Anuluj',
                     style: onSurfaceTextStyle(context).copyWith(fontSize: 18),
                   ),
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () {
+                    gradeNameCtrl.clear();
+                    Navigator.pop(context);
+                  },
                 ),
                 MaterialButton(
                   onPressed: () {
+                    grade.title = gradeNameCtrl.text;
                     Provider.of<GradeDatabase>(
                       context,
                       listen: false,
-                    ).updateGrade(
-                      grade.gradeId,
-                      studentId,
-                      gradeIdCtrl.text,
-                      grade.type,
-                      grade.grade,
-                      grade.gradeAdd,
-                    );
+                    ).updateGrade(studentId, grade);
+                    gradeNameCtrl.clear();
+
                     Navigator.pop(context);
                   },
                   child: Text(

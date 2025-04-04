@@ -7,26 +7,20 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class StudentDetailsCard extends StatelessWidget {
-  const StudentDetailsCard({
-    super.key,
-    required this.student,
-    required this.phoneNumberController,
-    required this.parentPhoneNumberController,
-    required this.parent2PhoneNumberController,
-    required this.nameController,
-    required this.lastNameController,
-  });
+  const StudentDetailsCard({super.key, required this.student});
 
+  //Passed down student object
   final Student student;
-
-  final TextEditingController phoneNumberController;
-  final TextEditingController parentPhoneNumberController;
-  final TextEditingController parent2PhoneNumberController;
-  final TextEditingController nameController;
-  final TextEditingController lastNameController;
 
   @override
   Widget build(BuildContext context) {
+    //controllers for editing data
+    final nameController = TextEditingController();
+    final lastNameController = TextEditingController();
+    final phoneNumberController = TextEditingController();
+    final parentPhoneNumberController = TextEditingController();
+    final parent2PhoneNumberController = TextEditingController();
+    //make an editable version of student's pointlist
     List<String> pointlist = List.from(student.points);
     return Card(
       shape: RoundedRectangleBorder(
@@ -129,20 +123,15 @@ class StudentDetailsCard extends StatelessWidget {
                                 ),
                                 MaterialButton(
                                   onPressed: () {
+                                    final newStudent = student;
+                                    newStudent.name = nameController.text;
+                                    newStudent.lastName =
+                                        lastNameController.text;
                                     Navigator.pop(context);
                                     Provider.of<StudentDatabase>(
                                       context,
                                       listen: false,
-                                    ).updateStudent(
-                                      student.studentId,
-                                      student.classIds,
-                                      nameController.text,
-                                      lastNameController.text,
-                                      student.phoneNumber,
-                                      student.parentPhoneNumber,
-                                      student.parentPhoneNumber2,
-                                      student.points,
-                                    );
+                                    ).updateStudent(newStudent);
                                   },
                                   child: Text(
                                     "Zapisz",
@@ -212,20 +201,18 @@ class StudentDetailsCard extends StatelessWidget {
                                 ),
                                 MaterialButton(
                                   onPressed: () {
+                                    final newStudent = student;
+                                    newStudent.phoneNumber =
+                                        phoneNumberController.text;
+                                    newStudent.parentPhoneNumber =
+                                        parentPhoneNumberController.text;
+                                    newStudent.parentPhoneNumber2 =
+                                        parent2PhoneNumberController.text;
                                     Navigator.pop(context);
                                     Provider.of<StudentDatabase>(
                                       context,
                                       listen: false,
-                                    ).updateStudent(
-                                      student.studentId,
-                                      student.classIds,
-                                      student.name,
-                                      student.lastName,
-                                      phoneNumberController.text,
-                                      parentPhoneNumberController.text,
-                                      parent2PhoneNumberController.text,
-                                      student.points,
-                                    );
+                                    ).updateStudent(newStudent);
                                   },
                                   child: Text(
                                     "Zapisz",
@@ -413,25 +400,18 @@ class StudentDetailsCard extends StatelessWidget {
                 ),
                 MaterialButton(
                   onPressed: () {
-                    Navigator.pop(context);
                     pointlist = activityGradeCheck(
                       context,
                       pointlist,
                       student.studentId,
                     );
+                    final newStudent = student;
+                    newStudent.points = pointlist;
+                    Navigator.pop(context);
                     Provider.of<StudentDatabase>(
                       context,
                       listen: false,
-                    ).updateStudent(
-                      student.studentId,
-                      student.classIds,
-                      student.name,
-                      student.lastName,
-                      student.phoneNumber,
-                      student.parentPhoneNumber,
-                      student.parentPhoneNumber2,
-                      pointlist,
-                    );
+                    ).updateStudent(newStudent);
                   },
                   child: Text(
                     "Zapisz",
@@ -467,11 +447,18 @@ List<String> activityGradeCheck(context, List<String> pointlist, studentId) {
       pointlist.removeAt(posIndex[i]);
     }
     debugPrint('Grades to add: $gradesToAdd, new pointlist: $pointlist');
+    Grade newActGrade =
+        Grade()
+          ..studentId = studentId
+          ..title = 'Plusy'
+          ..type = GradeType.activity
+          ..grade = '5'
+          ..gradeAdd = '';
     for (int i = 0; i < gradesToAdd; i++) {
       Provider.of<GradeDatabase>(
         context,
         listen: false,
-      ).createGrade(studentId, 'Plusy', GradeType.activity, '5', '');
+      ).createGrade(studentId, newActGrade);
     }
   } else {
     debugPrint('No grades to add');

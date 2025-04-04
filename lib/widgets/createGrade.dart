@@ -1,4 +1,5 @@
 import 'package:classplan_new/logic/methods/gradeTypeConversion.dart';
+import 'package:classplan_new/models/grade.dart';
 import 'package:classplan_new/models/grade_database.dart';
 import 'package:classplan_new/models/student.dart';
 import 'package:classplan_new/themes/app_theme.dart';
@@ -8,18 +9,21 @@ import 'package:provider/provider.dart';
 //enum for selecting a tristate icon button for addition to the grade (-/none/+)
 enum GradeAdditionState { minus, none, plus }
 
-Future createGrade(
-  BuildContext context,
-  TextEditingController gradeIdCtrl,
-  Student student,
-) {
-  //a set of selections for the gradetype segmented button
-  Set<String> gradeTypeSelection = {'I'};
+Future createGradeAlert(BuildContext context, Student student) {
+  //new grade instance with empty/default values and an already written student id;
+  Grade newGrade =
+      Grade()
+        ..studentId = student.studentId
+        ..grade = ''
+        ..type = GradeType.other
+        ..gradeAdd = ''
+        ..title = '';
 
-  //Final grade properties
-  String gradeVal = '';
-  String gradeType = 'I';
-  String gradeAdd = '';
+  //a set of selections for the gradetype segmented button - default to other
+  Set<String> gradeTypeSelection = {gradeTypeToString(newGrade.type)};
+
+  final gradeNameContoller = TextEditingController();
+  gradeNameContoller.clear();
 
   return showDialog(
     context: context,
@@ -27,25 +31,23 @@ Future createGrade(
         (context) => StatefulBuilder(
           builder: (context, setState) {
             void receiveGradeAddFromTriStateButton(String value) {
-              gradeAdd = value;
+              newGrade.gradeAdd = value;
               setState(() {});
             }
 
-            Color getGradeTypeColor(String type) {
+            Color getGradeTypeColor(GradeType type) {
               Color color = Theme.of(context).colorScheme.primary;
               switch (type) {
-                case 'T':
+                case GradeType.test:
                   color = Colors.red;
-                case 'K':
+                case GradeType.quiz:
                   color = Colors.green;
-                case 'A':
+                case GradeType.activity:
                   color = Colors.blue;
-                case 'P':
+                case GradeType.lesson:
                   color = Colors.lightBlue;
-                case 'I':
+                case GradeType.other:
                   color = Colors.deepPurple;
-                default:
-                  color = Theme.of(context).colorScheme.primary;
               }
               return color;
             }
@@ -72,7 +74,7 @@ Future createGrade(
                     ).copyWith(fontSize: 14),
                   ),
                   TextField(
-                    controller: gradeIdCtrl,
+                    controller: gradeNameContoller,
                     style: higherContentTextStyle(
                       context,
                     ).copyWith(fontSize: 16),
@@ -92,7 +94,7 @@ Future createGrade(
                         hintText: 'Ocena',
                         textStyle: higherContentTextStyle(
                           context,
-                        ).copyWith(color: getGradeTypeColor(gradeType)),
+                        ).copyWith(color: getGradeTypeColor(newGrade.type)),
                         inputDecorationTheme: InputDecorationTheme(
                           hintStyle: TextStyle(color: Colors.grey.shade400),
                           enabledBorder: OutlineInputBorder(
@@ -100,17 +102,17 @@ Future createGrade(
                           ),
                         ),
                         dropdownMenuEntries: <DropdownMenuEntry<int>>[
-                          DropdownMenuEntry(value: 0, label: '0   (nb/nz)'),
-                          DropdownMenuEntry(value: 1, label: '1   (ndst)'),
-                          DropdownMenuEntry(value: 2, label: '2   (dop)'),
-                          DropdownMenuEntry(value: 3, label: '3   (dst)'),
-                          DropdownMenuEntry(value: 4, label: '4   (db)'),
-                          DropdownMenuEntry(value: 5, label: '5   (bdb)'),
-                          DropdownMenuEntry(value: 6, label: '6   (cel)'),
+                          DropdownMenuEntry(value: 0, label: '0   nb/nz'),
+                          DropdownMenuEntry(value: 1, label: '1   ndst'),
+                          DropdownMenuEntry(value: 2, label: '2   dop'),
+                          DropdownMenuEntry(value: 3, label: '3   dst'),
+                          DropdownMenuEntry(value: 4, label: '4   db'),
+                          DropdownMenuEntry(value: 5, label: '5   bdb'),
+                          DropdownMenuEntry(value: 6, label: '6   cel'),
                         ],
                         onSelected: (value) {
                           setState(() {
-                            gradeVal = value.toString();
+                            newGrade.grade = value.toString();
                           });
                         },
                       ),
@@ -126,6 +128,7 @@ Future createGrade(
                           ),
                           GradeAddTriStateWidget(
                             onUpdate: receiveGradeAddFromTriStateButton,
+                            gradeAdd: newGrade.gradeAdd,
                           ),
                         ],
                       ),
@@ -233,30 +236,32 @@ Future createGrade(
                     onSelectionChanged: (Set<String> newSel) {
                       setState(() {
                         gradeTypeSelection = newSel;
-                        gradeType = newSel.join('');
+                        newGrade.type = stringToGradeType(newSel.join(''));
                       });
                     },
                   ),
-                  Text('Ocena: $gradeVal$gradeAdd typ $gradeType'),
+                  Text(
+                    //!DELETE BEFORE PUBLISHING
+                    'Ocena: ${newGrade.grade + newGrade.gradeAdd} typ ${newGrade.type}',
+                  ),
                 ],
               ),
               actions: [
                 MaterialButton(
                   child: Text('Anuluj'),
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () {
+                    gradeNameContoller.clear();
+                    Navigator.pop(context);
+                  },
                 ),
                 MaterialButton(
                   onPressed: () {
+                    newGrade.title = gradeNameContoller.text;
                     Provider.of<GradeDatabase>(
                       context,
                       listen: false,
-                    ).createGrade(
-                      student.studentId,
-                      gradeIdCtrl.text,
-                      stringToGradeType(gradeType),
-                      gradeVal,
-                      gradeAdd,
-                    );
+                    ).createGrade(student.studentId, newGrade);
+                    gradeNameContoller.clear();
                     Navigator.pop(context);
                   },
                   child: Text('Zapisz', style: higherContentTextStyle(context)),
@@ -269,45 +274,52 @@ Future createGrade(
 }
 
 class GradeAddTriStateWidget extends StatefulWidget {
-  const GradeAddTriStateWidget({super.key, required this.onUpdate});
+  const GradeAddTriStateWidget({
+    super.key,
+    required this.onUpdate,
+    required this.gradeAdd,
+  });
   final Function(String) onUpdate;
+  final String gradeAdd;
   @override
   State<GradeAddTriStateWidget> createState() => _GradeAddTriStateWidgetState();
 }
 
 class _GradeAddTriStateWidgetState extends State<GradeAddTriStateWidget> {
-  //initial value + variable for storing
-  GradeAdditionState checkstate = GradeAdditionState.none;
-  String valueForParent = '';
+  //initial value + variable for storing;
+  late String localGradeAdd;
+
+  @override
+  void initState() {
+    super.initState();
+    localGradeAdd = widget.gradeAdd;
+  }
 
   void toggleState() {
     setState(() {
-      checkstate =
-          GradeAdditionState.values[(checkstate.index + 1) %
-              GradeAdditionState.values.length];
+      switch (localGradeAdd) {
+        case '-':
+          localGradeAdd = '';
+        case '':
+          localGradeAdd = '+';
+        case '+':
+          localGradeAdd = '-';
+      }
+      ;
     });
-    switch (checkstate) {
-      case GradeAdditionState.minus:
-        valueForParent = '-';
-        break;
-      case GradeAdditionState.none:
-        valueForParent = '';
-        break;
-      case GradeAdditionState.plus:
-        valueForParent = '+';
-        break;
-    }
-    widget.onUpdate(valueForParent);
+    widget.onUpdate(localGradeAdd);
   }
 
   IconData getIconForState() {
-    switch (checkstate) {
-      case GradeAdditionState.minus:
+    switch (localGradeAdd) {
+      case '-':
         return Icons.remove_circle_outline;
-      case GradeAdditionState.none:
+      case '':
         return Icons.circle_outlined;
-      case GradeAdditionState.plus:
+      case '+':
         return Icons.add_circle_outline;
+      default:
+        return Icons.circle_outlined;
     }
   }
 
