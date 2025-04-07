@@ -42,6 +42,11 @@ const GradeSchema = CollectionSchema(
       name: r'type',
       type: IsarType.byte,
       enumMap: _GradetypeEnumValueMap,
+    ),
+    r'wasRecorded': PropertySchema(
+      id: 5,
+      name: r'wasRecorded',
+      type: IsarType.bool,
     )
   },
   estimateSize: _gradeEstimateSize,
@@ -81,6 +86,7 @@ void _gradeSerialize(
   writer.writeLong(offsets[2], object.studentId);
   writer.writeString(offsets[3], object.title);
   writer.writeByte(offsets[4], object.type.index);
+  writer.writeBool(offsets[5], object.wasRecorded);
 }
 
 Grade _gradeDeserialize(
@@ -97,6 +103,7 @@ Grade _gradeDeserialize(
   object.title = reader.readString(offsets[3]);
   object.type = _GradetypeValueEnumMap[reader.readByteOrNull(offsets[4])] ??
       GradeType.test;
+  object.wasRecorded = reader.readBool(offsets[5]);
   return object;
 }
 
@@ -118,6 +125,8 @@ P _gradeDeserializeProp<P>(
     case 4:
       return (_GradetypeValueEnumMap[reader.readByteOrNull(offset)] ??
           GradeType.test) as P;
+    case 5:
+      return (reader.readBool(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -769,6 +778,16 @@ extension GradeQueryFilter on QueryBuilder<Grade, Grade, QFilterCondition> {
       ));
     });
   }
+
+  QueryBuilder<Grade, Grade, QAfterFilterCondition> wasRecordedEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'wasRecorded',
+        value: value,
+      ));
+    });
+  }
 }
 
 extension GradeQueryObject on QueryBuilder<Grade, Grade, QFilterCondition> {}
@@ -833,6 +852,18 @@ extension GradeQuerySortBy on QueryBuilder<Grade, Grade, QSortBy> {
   QueryBuilder<Grade, Grade, QAfterSortBy> sortByTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'type', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Grade, Grade, QAfterSortBy> sortByWasRecorded() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'wasRecorded', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Grade, Grade, QAfterSortBy> sortByWasRecordedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'wasRecorded', Sort.desc);
     });
   }
 }
@@ -909,6 +940,18 @@ extension GradeQuerySortThenBy on QueryBuilder<Grade, Grade, QSortThenBy> {
       return query.addSortBy(r'type', Sort.desc);
     });
   }
+
+  QueryBuilder<Grade, Grade, QAfterSortBy> thenByWasRecorded() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'wasRecorded', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Grade, Grade, QAfterSortBy> thenByWasRecordedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'wasRecorded', Sort.desc);
+    });
+  }
 }
 
 extension GradeQueryWhereDistinct on QueryBuilder<Grade, Grade, QDistinct> {
@@ -942,6 +985,12 @@ extension GradeQueryWhereDistinct on QueryBuilder<Grade, Grade, QDistinct> {
   QueryBuilder<Grade, Grade, QDistinct> distinctByType() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'type');
+    });
+  }
+
+  QueryBuilder<Grade, Grade, QDistinct> distinctByWasRecorded() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'wasRecorded');
     });
   }
 }
@@ -980,6 +1029,12 @@ extension GradeQueryProperty on QueryBuilder<Grade, Grade, QQueryProperty> {
   QueryBuilder<Grade, GradeType, QQueryOperations> typeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'type');
+    });
+  }
+
+  QueryBuilder<Grade, bool, QQueryOperations> wasRecordedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'wasRecorded');
     });
   }
 }

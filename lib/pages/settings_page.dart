@@ -1,9 +1,10 @@
 // ignore: unused_import
 import 'package:classplan_new/logic/settings.json';
 import 'package:classplan_new/models/class_database.dart';
+import 'package:classplan_new/models/grade_database.dart';
 import 'package:classplan_new/models/student_database.dart';
 import 'package:classplan_new/themes/app_theme.dart';
-import 'package:classplan_new/widgets/appBar.dart';
+import 'package:classplan_new/widgets/appBars/appBar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -26,15 +27,19 @@ class SettingsPage extends StatelessWidget {
                     style: onSurfaceTextStyle(context),
                   ),
                   ElevatedButton(
-                    onPressed: () {
-                      Provider.of<ClassDatabase>(
+                    onPressed: () async {
+                      await Provider.of<ClassDatabase>(
                         context,
                         listen: false,
                       ).resetClassDatabase();
-                      Provider.of<StudentDatabase>(
+                      await Provider.of<StudentDatabase>(
                         context,
                         listen: false,
                       ).resetStudentDatabase();
+                      await Provider.of<GradeDatabase>(
+                        context,
+                        listen: false,
+                      ).resetGradeDatabase();
                     },
                     child: Icon(Icons.delete_forever_outlined),
                   ),

@@ -1,14 +1,15 @@
 import 'package:classplan_new/pages/student_details_page.dart';
 import 'package:classplan_new/themes/app_theme.dart';
+import 'package:classplan_new/widgets/alerts/classDetailsDialog.dart';
+import 'package:classplan_new/widgets/appBars/class_details_page_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:classplan_new/models/student_database.dart';
 import 'package:classplan_new/models/class_database.dart';
 
 class ClassDetailsPage extends StatefulWidget {
-  final int classId;
-
   const ClassDetailsPage({super.key, required this.classId});
+  final int classId;
 
   @override
   State<ClassDetailsPage> createState() => _ClassDetailsPageState();
@@ -41,108 +42,9 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
         child: Icon(Icons.add, size: 30),
         onPressed: () => addStudentDialog(context, widget.classId),
       ),
-      appBar: AppBar(
-        leading: BackButton(color: Theme.of(context).colorScheme.onPrimary),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        centerTitle: false,
-        title: Text(
-          "Informacje o klasie",
-          style: onPrimaryBoldTextStyle(context),
-        ),
-        actions: [
-          IconButton(
-            color: Theme.of(context).colorScheme.onPrimary,
-            onPressed: () {
-              Provider.of<StudentDatabase>(
-                context,
-                listen: false,
-              ).deleteClassFromAllStudents(widget.classId);
-              Provider.of<ClassDatabase>(
-                context,
-                listen: false,
-              ).deleteClass(widget.classId);
-              Navigator.pop(context);
-            },
-            icon: Icon(Icons.delete),
-          ),
-          TextButton.icon(
-            key: sortButtonKey,
-            onPressed: () {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (sortButtonKey.currentContext != null) {
-                  final RenderBox buttonRender =
-                      sortButtonKey.currentContext!.findRenderObject()
-                          as RenderBox;
-                  final Offset offset = buttonRender.localToGlobal(Offset.zero);
-
-                  showMenu(
-                    context: context,
-                    position: RelativeRect.fromLTRB(
-                      offset.dx,
-                      offset.dy + buttonRender.size.height,
-                      offset.dx + buttonRender.size.width,
-                      offset.dy + buttonRender.size.height * 2,
-                    ),
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    items: [
-                      PopupMenuItem(
-                        child: Text(
-                          'Domyślne',
-                          style: primaryTextStyle(
-                            context,
-                          ).copyWith(fontSize: 15),
-                        ),
-                        onTap:
-                            () => Provider.of<StudentDatabase>(
-                              context,
-                              listen: false,
-                            ).readStudents(widget.classId),
-                      ),
-                      PopupMenuItem(
-                        child: Text(
-                          'Po imieniu',
-                          style: primaryTextStyle(
-                            context,
-                          ).copyWith(fontSize: 15),
-                        ),
-                        onTap:
-                            () =>
-                                Provider.of<StudentDatabase>(
-                                  context,
-                                  listen: false,
-                                ).sortStudentsAlpha(),
-                      ),
-                      PopupMenuItem(
-                        child: Text(
-                          'Po nazwisku',
-                          style: primaryTextStyle(
-                            context,
-                          ).copyWith(fontSize: 15),
-                        ),
-                        onTap:
-                            () =>
-                                Provider.of<StudentDatabase>(
-                                  context,
-                                  listen: false,
-                                ).sortStudentsLastNameAlpha(),
-                      ),
-                    ],
-                  );
-                } else {
-                  debugPrint('Button not laid out');
-                }
-              });
-            },
-            label: Text(
-              'Sortuj',
-              style: onPrimaryTextStyle(context).copyWith(fontSize: 15),
-            ),
-            icon: Icon(
-              Icons.sort,
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-          ),
-        ],
+      appBar: ClassDetailsPageAppBar(
+        classId: widget.classId,
+        sortButtonKey: sortButtonKey,
       ),
       body: Consumer<ClassDatabase>(
         builder: (context, classDatabase, child) {
@@ -256,7 +158,7 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                             padding: const EdgeInsets.all(5.0),
                             child: ListTile(
                               title: Text(
-                                '${studentDatabase.studentList[index].name} ${studentDatabase.studentList[index].lastName}',
+                                '[${studentDatabase.studentList[index].internalId}] ${studentDatabase.studentList[index].name} ${studentDatabase.studentList[index].lastName}',
                                 style: higherContentTextStyle(context),
                               ),
                               subtitle: Column(
@@ -316,132 +218,3 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
     );
   }
 }
-
-//dialog for adding a new student
-void addStudentDialog(BuildContext context, int classId) {
-  final nameController = TextEditingController();
-  final lastNameController = TextEditingController();
-  showDialog(
-    context: context,
-    builder:
-        (context) => AlertDialog(
-          title: Text("Dodaj ucznia"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text("Imię:", style: higherContentTextStyle(context)),
-              TextField(
-                controller: nameController,
-                decoration: InputDecoration(
-                  hintText: "Imię ucznia",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(height: 15),
-              Text("Nazwisko:", style: higherContentTextStyle(context)),
-              TextField(
-                controller: lastNameController,
-                decoration: InputDecoration(
-                  hintText: "Nazwisko ucznia",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            MaterialButton(
-              onPressed: () {
-                Navigator.pop(context);
-                nameController.clear();
-                lastNameController.clear();
-              },
-              child: Text(
-                "Anuluj",
-                style: onSurfaceTextStyle(context).copyWith(fontSize: 18),
-              ),
-            ),
-            MaterialButton(
-              onPressed: () {
-                Provider.of<StudentDatabase>(context, listen: false).addStudent(
-                  nameController.text,
-                  lastNameController.text,
-                  classId,
-                );
-                Navigator.pop(context);
-                nameController.clear();
-                lastNameController.clear();
-              },
-              child: Text(
-                "Dodaj",
-                style: primaryBoldTextStyle(context).copyWith(fontSize: 18),
-              ),
-            ),
-          ],
-        ),
-  );
-}
-
-editCareTeacherDialog(BuildContext context) {
-  final careTeacherNameCtrl = TextEditingController();
-  showDialog(
-    context: context,
-    builder:
-        (context) => AlertDialog(
-          title: Text(
-            'Zmień wychowawcę',
-            style: primaryBoldTextStyle(context).copyWith(fontSize: 20),
-          ),
-          icon: Icon(
-            Icons.manage_accounts,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          content: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: careTeacherNameCtrl,
-                decoration: InputDecoration(
-                  hintText: 'Imie i nazwisko wychowawcy',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            MaterialButton(
-              onPressed: () {
-                Navigator.pop(context);
-                careTeacherNameCtrl.clear();
-              },
-              child: Text(
-                "Anuluj",
-                style: onSurfaceTextStyle(context).copyWith(fontSize: 18),
-              ),
-            ),
-            MaterialButton(
-              onPressed: () {
-                final newClass =
-                    Provider.of<ClassDatabase>(
-                      context,
-                      listen: false,
-                    ).fetchedClass;
-                newClass!.careTeacher = careTeacherNameCtrl.text;
-                Provider.of<ClassDatabase>(
-                  context,
-                  listen: false,
-                ).updateClass(newClass);
-                careTeacherNameCtrl.clear();
-                Navigator.pop(context);
-              },
-              child: Text(
-                "Zapisz",
-                style: primaryBoldTextStyle(context).copyWith(fontSize: 18),
-              ),
-            ),
-          ],
-        ),
-  );
-}
-
-deletionConfirmationStudent() {}

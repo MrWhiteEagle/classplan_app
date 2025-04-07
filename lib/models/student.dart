@@ -5,6 +5,7 @@ part 'student.g.dart';
 @collection
 class Student {
   Id studentId = Isar.autoIncrement;
+  late int internalId;
   List<Id> classIds = [];
   late String name;
   late String lastName;

@@ -1,4 +1,4 @@
-import 'package:classplan_new/widgets/appBar.dart';
+import 'package:classplan_new/widgets/appBars/appBar.dart';
 import 'package:classplan_new/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 

@@ -19,11 +19,24 @@ class StudentDatabase extends ChangeNotifier {
         Student()
           ..name = checkSpelling(studentName)
           ..lastName = checkSpelling(lastName)
+          ..internalId = await getNextStudentNumberForClass(classId)
           ..classIds.add(classId);
     await isarService.isar.writeTxn(
       () => isarService.isar.students.put(newStudent),
     );
     readStudents(classId);
+  }
+
+  //FETCH LAST STUDENT INTERNAL ID FOR CLASS
+  Future<int> getNextStudentNumberForClass(Id classId) async {
+    final lastStudent =
+        await isarService.isar.students
+            .filter()
+            .classIdsElementEqualTo(classId)
+            .sortByInternalIdDesc()
+            .findFirst();
+
+    return (lastStudent?.internalId ?? 0) + 1;
   }
 
   //READ STUDENTS BY CLASSID OR ALL

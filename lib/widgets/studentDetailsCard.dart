@@ -42,7 +42,7 @@ class StudentDetailsCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${student.name} ${student.lastName}',
+                  '${student.name} ${student.lastName} [nr ${student.internalId}]',
                   style: onPrimaryBoldTextStyle(context).copyWith(fontSize: 30),
                 ),
                 SizedBox(width: 10),

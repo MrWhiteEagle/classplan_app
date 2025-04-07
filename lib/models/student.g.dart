@@ -22,33 +22,38 @@ const StudentSchema = CollectionSchema(
       name: r'classIds',
       type: IsarType.longList,
     ),
-    r'lastName': PropertySchema(
+    r'internalId': PropertySchema(
       id: 1,
+      name: r'internalId',
+      type: IsarType.long,
+    ),
+    r'lastName': PropertySchema(
+      id: 2,
       name: r'lastName',
       type: IsarType.string,
     ),
     r'name': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'name',
       type: IsarType.string,
     ),
     r'parentPhoneNumber': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'parentPhoneNumber',
       type: IsarType.string,
     ),
     r'parentPhoneNumber2': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'parentPhoneNumber2',
       type: IsarType.string,
     ),
     r'phoneNumber': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'phoneNumber',
       type: IsarType.string,
     ),
     r'points': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'points',
       type: IsarType.stringList,
     )
@@ -96,12 +101,13 @@ void _studentSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeLongList(offsets[0], object.classIds);
-  writer.writeString(offsets[1], object.lastName);
-  writer.writeString(offsets[2], object.name);
-  writer.writeString(offsets[3], object.parentPhoneNumber);
-  writer.writeString(offsets[4], object.parentPhoneNumber2);
-  writer.writeString(offsets[5], object.phoneNumber);
-  writer.writeStringList(offsets[6], object.points);
+  writer.writeLong(offsets[1], object.internalId);
+  writer.writeString(offsets[2], object.lastName);
+  writer.writeString(offsets[3], object.name);
+  writer.writeString(offsets[4], object.parentPhoneNumber);
+  writer.writeString(offsets[5], object.parentPhoneNumber2);
+  writer.writeString(offsets[6], object.phoneNumber);
+  writer.writeStringList(offsets[7], object.points);
 }
 
 Student _studentDeserialize(
@@ -112,12 +118,13 @@ Student _studentDeserialize(
 ) {
   final object = Student();
   object.classIds = reader.readLongList(offsets[0]) ?? [];
-  object.lastName = reader.readString(offsets[1]);
-  object.name = reader.readString(offsets[2]);
-  object.parentPhoneNumber = reader.readString(offsets[3]);
-  object.parentPhoneNumber2 = reader.readString(offsets[4]);
-  object.phoneNumber = reader.readString(offsets[5]);
-  object.points = reader.readStringList(offsets[6]) ?? [];
+  object.internalId = reader.readLong(offsets[1]);
+  object.lastName = reader.readString(offsets[2]);
+  object.name = reader.readString(offsets[3]);
+  object.parentPhoneNumber = reader.readString(offsets[4]);
+  object.parentPhoneNumber2 = reader.readString(offsets[5]);
+  object.phoneNumber = reader.readString(offsets[6]);
+  object.points = reader.readStringList(offsets[7]) ?? [];
   object.studentId = id;
   return object;
 }
@@ -132,7 +139,7 @@ P _studentDeserializeProp<P>(
     case 0:
       return (reader.readLongList(offset) ?? []) as P;
     case 1:
-      return (reader.readString(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 2:
       return (reader.readString(offset)) as P;
     case 3:
@@ -142,6 +149,8 @@ P _studentDeserializeProp<P>(
     case 5:
       return (reader.readString(offset)) as P;
     case 6:
+      return (reader.readString(offset)) as P;
+    case 7:
       return (reader.readStringList(offset) ?? []) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -377,6 +386,59 @@ extension StudentQueryFilter
         upper,
         includeUpper,
       );
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> internalIdEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'internalId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> internalIdGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'internalId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> internalIdLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'internalId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterFilterCondition> internalIdBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'internalId',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
     });
   }
 
@@ -1320,6 +1382,18 @@ extension StudentQueryLinks
     on QueryBuilder<Student, Student, QFilterCondition> {}
 
 extension StudentQuerySortBy on QueryBuilder<Student, Student, QSortBy> {
+  QueryBuilder<Student, Student, QAfterSortBy> sortByInternalId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'internalId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterSortBy> sortByInternalIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'internalId', Sort.desc);
+    });
+  }
+
   QueryBuilder<Student, Student, QAfterSortBy> sortByLastName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastName', Sort.asc);
@@ -1383,6 +1457,18 @@ extension StudentQuerySortBy on QueryBuilder<Student, Student, QSortBy> {
 
 extension StudentQuerySortThenBy
     on QueryBuilder<Student, Student, QSortThenBy> {
+  QueryBuilder<Student, Student, QAfterSortBy> thenByInternalId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'internalId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Student, Student, QAfterSortBy> thenByInternalIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'internalId', Sort.desc);
+    });
+  }
+
   QueryBuilder<Student, Student, QAfterSortBy> thenByLastName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastName', Sort.asc);
@@ -1464,6 +1550,12 @@ extension StudentQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Student, Student, QDistinct> distinctByInternalId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'internalId');
+    });
+  }
+
   QueryBuilder<Student, Student, QDistinct> distinctByLastName(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1519,6 +1611,12 @@ extension StudentQueryProperty
   QueryBuilder<Student, List<int>, QQueryOperations> classIdsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'classIds');
+    });
+  }
+
+  QueryBuilder<Student, int, QQueryOperations> internalIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'internalId');
     });
   }
 

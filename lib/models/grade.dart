@@ -9,6 +9,7 @@ class Grade {
   Id gradeId = Isar.autoIncrement;
   late int studentId;
   late String title;
+  bool wasRecorded = false;
 
   @enumerated
   late GradeType type;
