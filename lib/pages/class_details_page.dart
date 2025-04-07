@@ -18,10 +18,14 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
   @override
   void initState() {
     super.initState();
+    //clear last fetched class and fetch this one
+    Provider.of<ClassDatabase>(context, listen: false).fetchedClass = null;
     Provider.of<ClassDatabase>(
       context,
       listen: false,
     ).fetchClassDetails(widget.classId);
+    //clear list of previous students and fetch this one
+    Provider.of<StudentDatabase>(context, listen: false).studentList.clear();
     Provider.of<StudentDatabase>(
       context,
       listen: false,
@@ -290,11 +294,13 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                                         );
                                       },
                                     ),
-                                  ).then(
-                                    (_) => studentDatabase.readStudents(
+                                  ).then((_) {
+                                    debugPrint('CLASS ID IS ${widget.classId}');
+                                    studentDatabase.studentList.clear();
+                                    studentDatabase.readStudents(
                                       widget.classId,
-                                    ),
-                                  ),
+                                    );
+                                  }),
                             ),
                           ),
                         );

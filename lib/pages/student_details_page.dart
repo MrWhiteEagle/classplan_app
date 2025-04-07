@@ -445,13 +445,13 @@ Future deletionConfirmationDialog(context, int studentId, String studentname) {
               ),
             ),
             TextButton.icon(
-              onPressed: () {
+              onPressed: () async {
                 Navigator.pop(context);
-                Provider.of<GradeDatabase>(
+                await Provider.of<GradeDatabase>(
                   context,
                   listen: false,
                 ).deleteAllStudentGrades(studentId);
-                Provider.of<StudentDatabase>(
+                await Provider.of<StudentDatabase>(
                   context,
                   listen: false,
                 ).deleteStudent(studentId);

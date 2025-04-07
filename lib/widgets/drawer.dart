@@ -1,4 +1,5 @@
 import 'package:classplan_new/pages/classes_page.dart';
+import 'package:classplan_new/pages/events_page.dart';
 import 'package:flutter/material.dart';
 import 'package:classplan_new/pages/settings_page.dart';
 
@@ -43,6 +44,13 @@ class UniversalDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.calendar_month_outlined),
             title: Text("W Y D A R Z E N I A"),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => EventsPage()),
+              );
+            },
           ),
           ListTile(
             leading: Icon(Icons.attach_money),

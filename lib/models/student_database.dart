@@ -28,20 +28,20 @@ class StudentDatabase extends ChangeNotifier {
 
   //READ STUDENTS BY CLASSID OR ALL
   Future<void> readStudents(Id? classId) async {
-    if (classId == null) {
-      //if no classID specified, fetches all studcents
-      List<Student> fetchedStudents =
-          await isarService.isar.students.where().findAll();
-      studentList.clear();
-      studentList.addAll(fetchedStudents);
-      notifyListeners();
-    } else {
+    if (classId != null) {
       //classID specified, fetched students from that class
       List<Student> fetchedStudents =
           await isarService.isar.students
               .filter()
               .classIdsElementEqualTo(classId)
               .findAll();
+      studentList.clear();
+      studentList.addAll(fetchedStudents);
+      notifyListeners();
+    } else {
+      //if no classID specified, fetches all studcents
+      List<Student> fetchedStudents =
+          await isarService.isar.students.where().findAll();
       studentList.clear();
       studentList.addAll(fetchedStudents);
       notifyListeners();
@@ -123,7 +123,12 @@ String checkSpelling(String text) {
     return text;
   }
   //delete all non-letters
-  text = text.replaceAll(RegExp(r'[^a-zA-Z]'), '');
+  text = text.replaceAll(RegExp(r'[^\p{L}]', unicode: true), '');
+
+  //if text turns out empty after cleanup, leave it empty
+  if (text.isEmpty) {
+    return text;
+  }
   //if the first letter is uppercase, return it
   if (text[0].toUpperCase() == text[0]) {
     return text;
