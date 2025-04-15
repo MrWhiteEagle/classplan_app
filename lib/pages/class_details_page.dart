@@ -4,8 +4,8 @@ import 'package:classplan_new/widgets/alerts/classDetailsDialog.dart';
 import 'package:classplan_new/widgets/appBars/class_details_page_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:classplan_new/models/student_database.dart';
-import 'package:classplan_new/models/class_database.dart';
+import 'package:classplan_new/logic/db/student_database.dart';
+import 'package:classplan_new/logic/db/class_database.dart';
 
 class ClassDetailsPage extends StatefulWidget {
   const ClassDetailsPage({super.key, required this.classId});
@@ -39,7 +39,11 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add, size: 30),
+        child: Icon(
+          Icons.add,
+          size: 30,
+          color: Theme.of(context).colorScheme.tertiaryContainer,
+        ),
         onPressed: () => addStudentDialog(context, widget.classId),
       ),
       appBar: ClassDetailsPageAppBar(
@@ -81,7 +85,10 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                               ),
                               icon: Icon(
                                 Icons.edit,
-                                color: Theme.of(context).colorScheme.primary,
+                                color:
+                                    Theme.of(
+                                      context,
+                                    ).colorScheme.onPrimaryContainer,
                               ),
                               iconAlignment: IconAlignment.end,
                               onPressed: () => editCareTeacherDialog(context),
@@ -110,7 +117,7 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                               builder: (context, studentDatabase, child) {
                                 return Text(
                                   studentDatabase.studentList.length.toString(),
-                                  style: secondaryBoldContainerTextStyle(
+                                  style: tertiaryBoldContainerTextStyle(
                                     context,
                                   ).copyWith(fontSize: 15),
                                 );

@@ -1,5 +1,5 @@
-import 'package:classplan_new/models/grade_database.dart';
-import 'package:classplan_new/models/student_database.dart';
+import 'package:classplan_new/logic/db/grade_database.dart';
+import 'package:classplan_new/logic/db/student_database.dart';
 import 'package:classplan_new/themes/app_theme.dart';
 import 'package:classplan_new/widgets/alerts/createGrade.dart';
 import 'package:classplan_new/widgets/appBars/student_details_page_appbar.dart';

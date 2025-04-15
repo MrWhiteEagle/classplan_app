@@ -1,5 +1,5 @@
-import 'package:classplan_new/models/class_database.dart';
-import 'package:classplan_new/models/student_database.dart';
+import 'package:classplan_new/logic/db/class_database.dart';
+import 'package:classplan_new/logic/db/student_database.dart';
 import 'package:classplan_new/themes/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

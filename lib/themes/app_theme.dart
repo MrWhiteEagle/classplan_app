@@ -56,21 +56,21 @@ ThemeData lightMode = ThemeData(
   brightness: Brightness.light,
   colorScheme: ColorScheme.light(
     //PRIMARY COLOR
-    primary: Color(0xFF190852),
+    primary: Color.fromARGB(255, 28, 9, 92),
     onPrimary: Colors.white,
-    primaryContainer: Color(0xFF2e2267),
-    onPrimaryContainer: Color(0xFFbdb1ff),
+    primaryContainer: Color.fromARGB(255, 31, 15, 112),
+    onPrimaryContainer: Color.fromARGB(255, 146, 180, 255),
 
     //SECONDARY COLOR
-    secondary: Color(0xFF6b004d),
+    secondary: Color.fromARGB(255, 61, 0, 117),
     onSecondary: Colors.white,
-    secondaryContainer: Color(0xFFc32991),
+    secondaryContainer: Color.fromARGB(255, 109, 13, 199),
     onSecondaryContainer: Colors.white,
 
     //TERTIARY COLOR
-    tertiary: Color(0xFF003d3d),
+    tertiary: Color.fromARGB(255, 0, 83, 116),
     onTertiary: Colors.white,
-    tertiaryContainer: Color(0xFF007a7a),
+    tertiaryContainer: Color.fromARGB(255, 0, 143, 199),
     onTertiaryContainer: Colors.white,
 
     //ERROR COLOR

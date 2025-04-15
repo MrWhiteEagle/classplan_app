@@ -1,8 +1,8 @@
 // ignore: unused_import
 import 'package:classplan_new/logic/settings.json';
-import 'package:classplan_new/models/class_database.dart';
-import 'package:classplan_new/models/grade_database.dart';
-import 'package:classplan_new/models/student_database.dart';
+import 'package:classplan_new/logic/db/class_database.dart';
+import 'package:classplan_new/logic/db/grade_database.dart';
+import 'package:classplan_new/logic/db/student_database.dart';
 import 'package:classplan_new/themes/app_theme.dart';
 import 'package:classplan_new/widgets/appBars/appBar.dart';
 import 'package:flutter/material.dart';

@@ -1,4 +1,4 @@
-import 'package:classplan_new/models/class_database.dart';
+import 'package:classplan_new/logic/db/class_database.dart';
 import 'package:classplan_new/pages/class_details_page.dart';
 // ignore: unused_import
 import 'package:classplan_new/themes/app_theme.dart';
@@ -107,7 +107,11 @@ class _ClassesPageState extends State<ClassesPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => createClass(context, textController),
-        child: Icon(Icons.add),
+        child: Icon(
+          Icons.add,
+          size: 30,
+          color: Theme.of(context).colorScheme.tertiaryContainer,
+        ),
       ),
       //Consumer causes rebuild on every classDatabase entry change
       body: Consumer<ClassDatabase>(
@@ -125,6 +129,13 @@ class _ClassesPageState extends State<ClassesPage> {
               return Card(
                 elevation: 5,
                 color: Theme.of(context).colorScheme.primaryContainer,
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.tertiaryContainer,
+                    width: 2,
+                  ),
+                  borderRadius: BorderRadius.circular(15),
+                ),
                 child: ListTile(
                   title: Text(
                     classObj.name,

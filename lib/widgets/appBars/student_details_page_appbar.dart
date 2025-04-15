@@ -1,4 +1,4 @@
-import 'package:classplan_new/models/grade_database.dart';
+import 'package:classplan_new/logic/db/grade_database.dart';
 import 'package:classplan_new/models/student.dart';
 import 'package:classplan_new/themes/app_theme.dart';
 import 'package:classplan_new/widgets/student_grade_tile.dart';

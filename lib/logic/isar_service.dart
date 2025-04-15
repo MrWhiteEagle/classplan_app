@@ -1,8 +1,9 @@
+import 'package:classplan_new/models/event.dart';
 import 'package:classplan_new/models/grade.dart';
-import 'package:isar/isar.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:classplan_new/models/class.dart';
 import 'package:classplan_new/models/student.dart';
+import 'package:isar/isar.dart';
+import 'package:path_provider/path_provider.dart';
 
 class IsarService {
   static final IsarService _instance = IsarService._internal();
@@ -21,6 +22,7 @@ class IsarService {
         ClassObjSchema,
         StudentSchema,
         GradeSchema,
+        EventSchema,
       ], directory: dir.path);
     } else {
       isar = Isar.getInstance()!;

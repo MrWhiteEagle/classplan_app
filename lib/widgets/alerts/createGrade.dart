@@ -1,6 +1,6 @@
 import 'package:classplan_new/logic/methods/gradeTypeConversion.dart';
 import 'package:classplan_new/models/grade.dart';
-import 'package:classplan_new/models/grade_database.dart';
+import 'package:classplan_new/logic/db/grade_database.dart';
 import 'package:classplan_new/models/student.dart';
 import 'package:classplan_new/themes/app_theme.dart';
 import 'package:flutter/material.dart';

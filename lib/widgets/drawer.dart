@@ -1,5 +1,5 @@
 import 'package:classplan_new/pages/classes_page.dart';
-import 'package:classplan_new/pages/events_page.dart';
+import 'package:classplan_new/pages/events_subpages/events_page.dart';
 import 'package:flutter/material.dart';
 import 'package:classplan_new/pages/settings_page.dart';
 
