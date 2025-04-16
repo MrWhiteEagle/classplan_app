@@ -1,22 +1,37 @@
+import 'package:classplan_new/logic/db/event_database.dart';
+import 'package:classplan_new/models/event.dart';
 import 'package:classplan_new/themes/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class EventCreatePage extends StatelessWidget {
+class EventCreatePage extends StatefulWidget {
   const EventCreatePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final DateTime today = DateTime.now();
-    DateTime selectedDate = today;
-    TimeOfDay time = TimeOfDay.now();
-    TimeOfDay reminderTime = TimeOfDay(
-      hour: time.hour - 1,
-      minute: time.minute,
+  State<EventCreatePage> createState() => _EventCreatePageState();
+}
+
+class _EventCreatePageState extends State<EventCreatePage> {
+  DateTime today = DateTime.now();
+  late DateTime selectedDate;
+  TimeOfDay selectedTime = TimeOfDay.now();
+  late TimeOfDay reminderTime;
+
+  final eventNameCtrl = TextEditingController();
+  final eventDescCtrl = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    selectedDate = today;
+    reminderTime = TimeOfDay(
+      hour: selectedTime.hour - 1,
+      minute: selectedTime.minute,
     );
+  }
 
-    final eventNameCtrl = TextEditingController();
-    final eventDescCtrl = TextEditingController();
-
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Nowe Wydarzenie'),
@@ -109,15 +124,20 @@ class EventCreatePage extends StatelessWidget {
                         ),
                       ),
                       onPressed: () async {
-                        showDatePicker(
+                        final DateTime? date = await showDatePicker(
                           context: context,
-                          firstDate: today,
+                          firstDate: selectedDate,
                           lastDate: DateTime(
                             today.year + 2,
                             today.month,
                             today.day,
                           ),
                         );
+                        if (date != null) {
+                          setState(() {
+                            selectedDate = date;
+                          });
+                        }
                       },
                       label: Text(
                         '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
@@ -153,13 +173,18 @@ class EventCreatePage extends StatelessWidget {
                         ),
                       ),
                       onPressed: () async {
-                        showTimePicker(
+                        final TimeOfDay? time = await showTimePicker(
                           context: context,
-                          initialTime: reminderTime,
+                          initialTime: selectedTime,
                         );
+                        if (time != null) {
+                          setState(() {
+                            selectedTime = time;
+                          });
+                        }
                       },
                       label: Text(
-                        '${time.hour}:${time.minute}',
+                        selectedTime.format(context),
                         style: secondaryTextStyle(
                           context,
                         ).copyWith(fontSize: 18),
@@ -189,13 +214,18 @@ class EventCreatePage extends StatelessWidget {
                         ),
                       ),
                       onPressed: () async {
-                        showTimePicker(
+                        final TimeOfDay? reminder = await showTimePicker(
                           context: context,
                           initialTime: reminderTime,
                         );
+                        if (reminder != null) {
+                          setState(() {
+                            reminderTime = reminder;
+                          });
+                        }
                       },
                       label: Text(
-                        '${reminderTime.hour}:${reminderTime.minute}',
+                        reminderTime.format(context),
                         style: secondaryTextStyle(
                           context,
                         ).copyWith(fontSize: 18),
@@ -232,7 +262,39 @@ class EventCreatePage extends StatelessWidget {
                       child: Text('Anuluj'),
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        final DateTime finalDateTime = DateTime(
+                          selectedDate.year,
+                          selectedDate.month,
+                          selectedDate.day,
+                          selectedTime.hour,
+                          selectedTime.minute,
+                        );
+                        final DateTime finalReminder = DateTime(
+                          selectedDate.year,
+                          selectedDate.month,
+                          selectedDate.day,
+                          reminderTime.hour,
+                          reminderTime.minute,
+                        );
+                        debugPrint(finalDateTime.toString());
+                        debugPrint(finalReminder.toString());
+                        final Event newEvent =
+                            Event()
+                              ..title = eventNameCtrl.text
+                              ..description = eventDescCtrl.text
+                              ..date = finalDateTime
+                              ..reminder = finalReminder;
+                        await Provider.of<EventDatabase>(
+                          context,
+                          listen: false,
+                        ).createEvent(newEvent);
+                        await Provider.of<EventDatabase>(
+                          context,
+                          listen: false,
+                        ).readEvents();
+                        Navigator.pop(context);
+                      },
                       style: ButtonStyle(
                         shape: WidgetStatePropertyAll(
                           RoundedRectangleBorder(
@@ -255,4 +317,24 @@ class EventCreatePage extends StatelessWidget {
       ),
     );
   }
+}
+
+void throwErrorNotify(int i, BuildContext context) {
+  // switch (i) {
+  //   case 0:
+  //     Fluttertoast.showToast(
+  //       msg: 'Puste pole: Tytuł',
+  //       backgroundColor: Theme.of(context).colorScheme.error,
+  //     );
+  //   case 1:
+  //     Fluttertoast.showToast(
+  //       msg: 'Wybrano przeszłą datę.',
+  //       backgroundColor: Theme.of(context).colorScheme.error,
+  //     );
+  //   case 2:
+  //     Fluttertoast.showToast(
+  //       msg: 'Przypomnienie nie może być później niż wybrana godzina',
+  //       backgroundColor: Theme.of(context).colorScheme.error,
+  //     );
+  // }
 }

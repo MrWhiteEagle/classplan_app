@@ -31,6 +31,7 @@ class _EventListPageState extends State<EventListPage> {
           );
         }
         return ListView.builder(
+          itemCount: eventsDb.fetchedEvents.length,
           itemBuilder: (context, index) {
             return ListTile(
               title: Text(eventsDb.fetchedEvents[index].title),
